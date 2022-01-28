@@ -25,6 +25,38 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.TEXT,
       allowNull: false,
     },
+    operatingSystems: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    filesIncluded: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    supportedCms: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    htmlFrameworks: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    jsFrameworks: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    softwareVersions: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    softwareFrameworks: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    database: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
     liveDemo: {
       type: DataTypes.STRING,
       allowNull: false,
@@ -40,13 +72,41 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: true,
     },
-    screenshots: {
+    screenshot1: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    screenshot2: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    screenshot3: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    screenshot4: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    screenshot5: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    screenshot6: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    screenshot7: {
+      type: DataTypes.STRING,
+      allowNull: true,
+    },
+    screenshot8: {
       type: DataTypes.STRING,
       allowNull: true,
     },
     mainZip: {
       type: DataTypes.STRING,
-      allowNull: false,
+      allowNull: true,
     },
     priceSingle: {
       type: DataTypes.DOUBLE,
@@ -64,49 +124,59 @@ module.exports = (sequelize, DataTypes) => {
         min: 0,
       },
     },
-    // category: {
-    //   type: DataTypes.UUID,
-    //   references: {
-    //     model: categoryModel,
-    //     key: 'id',
-    //   },
-    // },
-    // subcategory: {
-    //   type: DataTypes.UUID,
-    //   references: {
-    //     model: subcategoryModel,
-    //     key: 'id',
-    //   },
-    // },
-    // user: {
-    //   type: DataTypes.UUID,
-    //   references: {
-    //     model: userModel,
-    //     key: 'id',
-    //   },
-    // },
+    category: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'categories',
+        key: 'id',
+      },
+    },
+    subcategory: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'subcategories',
+        key: 'id',
+      },
+    },
+    user: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+    },
   });
 
-  Product.associate = (models) => {
-    Product.belongsTo(models.User, {
-      foreignKey: {
-        allowNull: false,
-      },
-    });
-    Product.belongsTo(models.Category, {
-      foreignKey: {
-        allowNull: false,
-      },
-    });
-    Product.belongsTo(models.SubCategory, {
-      foreignKey: {
-        allowNull: false,
-      },
-    });
+  // Product.associate = (models) => {
+  //   Product.belongsTo(
+  //     models.users,
+  //     {
+  //       foreignKey: {
+  //         allowNull: false,
+  //       },
+  //     },
+  //     { as: 'user' }
+  //   );
+  //   Product.belongsTo(
+  //     models.categories,
+  //     {
+  //       foreignKey: {
+  //         allowNull: false,
+  //       },
+  //     }
+  //   );
+  //   Product.belongsTo(
+  //     models.subcategories,
+  //     {
+  //       foreignKey: {
+  //         allowNull: false,
+  //       },
+  //     }
+  //   );
 
-    Product.hasMany(models.Transaction);
-    Product.hasMany(models.Wishlist);
-  };
+  //   Product.hasMany(models.Transaction);
+  //   Product.hasMany(models.Wishlist);
+  // };
 
   return Product;
 };

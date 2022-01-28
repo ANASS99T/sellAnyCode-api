@@ -11,26 +11,26 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    // category: {
-    //   type: DataTypes.UUID,
-    //   references: {
-    //     model: categoryModel,
-    //     key: 'id',
-    //   },
-    // },
+    category: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'categories',
+        key: 'id',
+      },
+    },
   });
 
-  Subcategory.associate = (models) => {
-    Subcategory.belongsTo(models.Category, {
-      foreignKey: {
-        allowNull: false,
-      },
-    });
-    Subcategory.hasMany(models.Product, {
-      onDelete: 'cascade',
-      onUpdate: 'cascade',
-    });
-  };
+  // Subcategory.associate = (models) => {
+  //   Subcategory.belongsTo(models.Category, {
+  //     foreignKey: {
+  //       allowNull: false,
+  //     },
+  //   });
+  //   Subcategory.hasMany(models.Product, {
+  //     onDelete: 'cascade',
+  //     onUpdate: 'cascade',
+  //   });
+  // };
 
   return Subcategory;
 };
