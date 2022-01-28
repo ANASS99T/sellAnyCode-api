@@ -13,6 +13,7 @@ module.exports = (sequelize, DataTypes) => {
     },
     category: {
       type: DataTypes.UUID,
+      allowNull: false,
       references: {
         model: 'categories',
         key: 'id',
@@ -20,17 +21,17 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  // Subcategory.associate = (models) => {
-  //   Subcategory.belongsTo(models.Category, {
-  //     foreignKey: {
-  //       allowNull: false,
-  //     },
-  //   });
-  //   Subcategory.hasMany(models.Product, {
-  //     onDelete: 'cascade',
-  //     onUpdate: 'cascade',
-  //   });
-  // };
+  Subcategory.associate = (models) => {
+    Subcategory.belongsTo(models.Category, {
+      foreignKey: {
+        allowNull: false,
+      },
+    });
+    Subcategory.hasMany(models.Product, {
+      onDelete: 'cascade',
+      onUpdate: 'cascade',
+    });
+  };
 
   return Subcategory;
 };
