@@ -8,6 +8,7 @@ router.delete('/:id', subcategoryController.deleteSubcategory);
 router.get('/:id', subcategoryController.getSubcategoryById);
 router.get('/name/:name', subcategoryController.getSubcategoriesByName);
 router.get('/', subcategoryController.getSubcategories);
+router.get('/category/:category', subcategoryController.getSubcategoriesByCategory);
 
 
 

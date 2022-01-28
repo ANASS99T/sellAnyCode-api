@@ -5,6 +5,7 @@ const { Op } = require('sequelize');
 // Main model
 
 const Category = db.categories;
+const Subcategory = db.subcategories;
 
 // TODO: Add category
 
@@ -115,16 +116,51 @@ const getCategoriesByName = async (req, res, next) => {
 // *  ==================== START ====================
 
 const getCategories = async (req, res, next) => {
-    try {
-      const categories = await Category.findAll();
-      return res.status(201).json({ success: true, categories });
-    } catch (error) {
-      console.log(error);
-      return res
-        .status(403)
-        .json({ success: false, error: 'An error occurred!' });
-    }
-  };
+  try {
+    const categories = await Category.findAll();
+    return res.status(201).json({ success: true, categories });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(403)
+      .json({ success: false, error: 'An error occurred!' });
+  }
+};
+
+// *  ==================== END ====================
+
+// TODO: Get All Categories with subcategories
+
+// *  ==================== START ====================
+
+const getCategoriesWithSubcategories = async (req, res, next) => {
+  try {
+    let categories = await Category.findAll();
+
+    let list = [];
+
+    await Promise.all(
+      categories.map(async (category) => {
+          
+        const subcategories = await Subcategory.findAll({
+          where: { category: category.dataValues.id },
+        });
+        const obj = await {
+          ...category.dataValues,
+          subcategories: subcategories,
+        };
+        await list.push(obj);
+      })
+    );
+
+    return res.status(201).json({ success: true, categories: list });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(403)
+      .json({ success: false, error: 'An error occurred!' });
+  }
+};
 
 // *  ==================== END ====================
 
@@ -134,5 +170,6 @@ module.exports = {
   deleteCategory,
   getCategoryById,
   getCategoriesByName,
-  getCategories
+  getCategories,
+  getCategoriesWithSubcategories,
 };

@@ -179,14 +179,24 @@ const getSubcategoriesByCategory = async (req, res, next) => {
       where: { category: category },
     });
 
-    subcategories.map(async (subcategory) => {
-      const category = await Category.findOne({
-        where: { id: subcategory.category },
-      });
-      subcategory.category = category;
-    });
 
-    return res.status(201).json({ success: true, subcategories });
+
+    let list = [];
+    await Promise.all(
+      subcategories.map(async (subcategory) => {
+        const category = await Category.findOne({
+          where: { id: subcategory.category },
+        });
+        const obj = await {
+          ...subcategory.dataValues,
+          category: category.dataValues,
+        };
+        await list.push(obj);
+      })
+    );
+
+
+    return res.status(201).json({ success: true, subcategories: list });
   } catch (error) {
     console.log(error);
     return res
