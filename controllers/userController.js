@@ -19,7 +19,7 @@ const User = db.users;
 const addUser = async (data) => {
   // ? check if the email already exists?
 
-  const isExist = User.findOne({
+  const isExist = await User.findOne({
     attributes: ['email'],
     where: {
       email: data.email,
@@ -36,7 +36,7 @@ const addUser = async (data) => {
   data.password = password;
 
   //TODO: Create user
-  const user = User.create(data);
+  const user = await User.create(data);
   return { success: true, status: 201, message: 'User created', user };
 };
 // *  ==================== END ====================
@@ -53,27 +53,35 @@ const register = async (req, res) => {
   };
 
   // TODO: create the user
-  const addedUser = addUser(data);
+  try {
+    const addedUser = await addUser(data);
 
-  addedUser
-    .then(function (result) {
-      if (result.success) {
-        console.log({ done: result });
-        // TODO: Generate a token and log the user in
-        const token = createAccessToken(result.user);
-        res.status(201).json({
-          success: true,
-          message: 'user created successfully.',
-          user: result.user,
-          token: token,
-        });
-      } else {
-        res
-          .status(result.status)
-          .json({ success: false, message: result.message });
-      }
-    })
-    .catch((err) => console.log({ error: err }));
+  // addedUser
+  // .then(function (result) {
+  if (addedUser.success) {
+    // console.log({ done: result });
+    // TODO: Generate a token and log the user in
+    const token = createAccessToken(addedUser.user);
+    res.status(201).json({
+      success: true,
+      message: 'user created successfully.',
+      user: addedUser.user,
+      token: token,
+    });
+  } else {
+    res
+      .status(addedUser.status)
+      .json({ success: false, message: addedUser.message });
+  }
+
+  } catch (error) {
+    res
+    .status(403)
+    .json({ success: false,error });
+  }
+  
+  // })
+  // .catch((err) => console.log({ error: err }));
 };
 // *  ==================== END ====================
 
@@ -399,9 +407,11 @@ const updateUser = async (req, res, next) => {
     });
   }
 
- 
   try {
-    const user = await User.update({...req.body, fullName:'Anass'}, { where: { id: id } });
+    const user = await User.update(
+      { ...req.body, fullName: 'Anass' },
+      { where: { id: id } }
+    );
 
     return res
       .status(201)
@@ -499,7 +509,6 @@ const deleteAccount = async (req, res) => {
 };
 
 // *  ==================== END ====================
-
 
 module.exports = {
   register,

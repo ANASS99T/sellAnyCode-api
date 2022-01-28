@@ -45,9 +45,9 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
-
 router.post(
-  '/add-product',
+  '/',
+  checkAuth,
   upload.fields([
     { name: 'icon', maxCount: 1 },
     { name: 'preview', maxCount: 1 },
@@ -63,5 +63,31 @@ router.post(
   ]),
   productController.addProduct
 );
+
+router.put(
+  '/:id',
+  checkAuth,
+  upload.fields([
+    { name: 'icon', maxCount: 1 },
+    { name: 'preview', maxCount: 1 },
+    { name: 'screenshot1', maxCount: 1 },
+    { name: 'screenshot2', maxCount: 1 },
+    { name: 'screenshot3', maxCount: 1 },
+    { name: 'screenshot4', maxCount: 1 },
+    { name: 'screenshot5', maxCount: 1 },
+    { name: 'screenshot6', maxCount: 1 },
+    { name: 'screenshot7', maxCount: 1 },
+    { name: 'screenshot8', maxCount: 1 },
+    { name: 'mainZip', maxCount: 1 },
+  ]),
+  productController.updateProduct
+);
+router.get('/:id', checkAuth, productController.getProductById);
+router.get('/category/:category', productController.getProductsByCategory);
+router.get('/subcategory/:subcategory', productController.getProductsBySubcategory);
+router.get('/name/:name', productController.getProductsByName);
+router.get('/user/:user', productController.getProductsByUser);
+router.delete('/:id', productController.deleteProduct);
+router.get('/', productController.getAllProducts);
 
 module.exports = router;
