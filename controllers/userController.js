@@ -2,6 +2,7 @@ const db = require('../models');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 require('dotenv/config');
+const fs = require('fs');
 
 // TODO: Function to Create Valide Access Token :
 const createAccessToken = (user) =>
@@ -392,12 +393,10 @@ const updateUser = async (req, res, next) => {
     req.body.hasOwnProperty('income') ||
     req.body.hasOwnProperty('whidraw')
   ) {
-    return res
-      .status(403)
-      .json({
-        success: false,
-        message: "you are tring to update something that you can't updat ",
-      });
+    return res.status(403).json({
+      success: false,
+      message: "you are tring to update something that you can't updat ",
+    });
   }
 
   try {
@@ -420,10 +419,86 @@ const updateUser = async (req, res, next) => {
 
 // *  ==================== Start ====================
 
+const updateAvatar = async (req, res, next) => {
+  const { id } = req.params;
 
+  // ? check if the user exists :
 
+  const isExist = await User.findOne({ where: { id: id } });
+
+  if (isExist && isExist.id === id) {
+    try {
+      // TODO: if no file uploaded update the avatar with null
+      if (req.file === undefined) {
+        // TODO: Remove previous image from the Server
+        isExist.avatar !== null &&
+          fs.unlink(`uploads/avatar/${isExist.avatar}`, (err) => {
+            if (err)
+              return res.status(403).json({ success: false, error: err });
+            console.log('file deleted successfully');
+          });
+
+        await User.update({ avatar: null }, { where: { id: id } });
+        return res
+          .status(201)
+          .json({ success: true, message: 'avatar successfully' });
+      }
+
+      await User.update({ avatar: req.file.filename }, { where: { id: id } });
+
+      // TODO: Remove previous image from the Server
+      isExist.avatar !== null &&
+        fs.unlink(`uploads/avatar/${isExist.avatar}`, (err) => {
+          if (err) return res.status(403).json({ success: false, error: err });
+          console.log('file deleted successfully');
+        });
+
+      return res
+        .status(201)
+        .json({ success: true, message: 'avatar successfully' });
+    } catch {
+      (err) => {
+        console.log(err);
+        return res.status(403).json({ success: false, error: err });
+      };
+    }
+  } else {
+    fs.unlink(`uploads/avatar/${req.file.filename}`, (err) => {
+      if (err) return res.status(403).json({ success: false, error: err });
+      console.log('file deleted successfully');
+    });
+
+    return res.status(403).json({ success: false, message: 'Not valid ID' });
+  }
+
+  // throw "Testing error"
+};
 
 // *  ==================== END ====================
+
+// TODO : Delete account
+
+// *  ==================== Start ====================
+
+const deleteAccount = async (req, res) => {
+  const { id } = req.params;
+
+  try {
+    await User.destroy({ where: { id: id } });
+
+    return res
+      .status(200)
+      .json({ success: true, message: 'User deleted successfully' });
+  } catch {
+    (err) => {
+      console.log(err);
+      return res.status(403).json({ success: false, error: err });
+    };
+  }
+};
+
+// *  ==================== END ====================
+
 
 module.exports = {
   register,
@@ -434,4 +509,6 @@ module.exports = {
   ResetPasswordCheckUser,
   ResetPassword,
   updateUser,
+  deleteAccount,
+  updateAvatar,
 };
