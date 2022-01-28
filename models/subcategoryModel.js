@@ -11,13 +11,14 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.STRING,
       allowNull: false,
     },
-    // category: {
-    //   type: DataTypes.UUID,
-    //   references: {
-    //     model: categoryModel,
-    //     key: 'id',
-    //   },
-    // },
+    category: {
+      type: DataTypes.UUID,
+      allowNull: false,
+      references: {
+        model: 'categories',
+        key: 'id',
+      },
+    },
   });
 
   Subcategory.associate = (models) => {

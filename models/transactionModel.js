@@ -17,34 +17,34 @@ module.exports = (sequelize, DataTypes) => {
       allowNull: false,
       defaultValue: 'Failed',
     },
-    // user: {
-    //   type: DataTypes.UUID,
-    //   references: {
-    //     model: userModel,
-    //     key: 'id',
-    //   },
-    // },
-    // product: {
-    //   type: DataTypes.UUID,
-    //   references: {
-    //     model: productModel,
-    //     key: 'id',
-    //   },
-    // },
+    user: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'users',
+        key: 'id',
+      },
+    },
+    product: {
+      type: DataTypes.UUID,
+      references: {
+        model: 'products',
+        key: 'id',
+      },
+    },
   });
 
-  Transaction.associate = (models) => {
-    Transaction.belongsTo(models.User, {
-      foreignKey: {
-        allowNull: false,
-      },
-    });
-    Transaction.belongsTo(models.Product, {
-      foreignKey: {
-        allowNull: false,
-      },
-    });
-  };
+  // Transaction.associate = (models) => {
+  //   Transaction.belongsTo(models.User, {
+  //     foreignKey: {
+  //       allowNull: false,
+  //     },
+  //   });
+  //   Transaction.belongsTo(models.Product, {
+  //     foreignKey: {
+  //       allowNull: false,
+  //     },
+  //   });
+  // };
 
   return Transaction;
 };

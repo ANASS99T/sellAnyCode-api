@@ -17,7 +17,21 @@ const storage = multer.diskStorage({
   },
 });
 
-const uploadAvatar = multer({ storage: storage });
+const fileFilter = (req, file, cb) => {
+  // Accpet file
+  if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg')
+    cb(null, true);
+  // Reject file
+  else cb(new Error('file type not supported'), false);
+};
+
+const upload = multer({
+  storage: storage,
+  limits: {
+    fileSize: 1024 * 1024 * 5,
+  },
+  fileFilter: fileFilter,
+});
 
 router.post('/register', userController.register);
 router.post('/login', userController.login);
@@ -30,7 +44,8 @@ router.put('/:id', checkAuth, userController.updateUser);
 router.delete('/:id', checkAuth, userController.deleteAccount);
 router.put(
   '/avatar/:id',
-  /*checkAuth,*/ uploadAvatar.single('avatar'),
+  checkAuth,
+  upload.single('avatar'),
   userController.updateAvatar
 );
 

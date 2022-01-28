@@ -399,8 +399,9 @@ const updateUser = async (req, res, next) => {
     });
   }
 
+ 
   try {
-    const user = await User.update(req.body, { where: { id: id } });
+    const user = await User.update({...req.body, fullName:'Anass'}, { where: { id: id } });
 
     return res
       .status(201)
