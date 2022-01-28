@@ -377,6 +377,54 @@ const ResetPassword = async (req, res) => {
 
 // *  ==================== END ====================
 
+// TODO: Update user info
+
+// *  ==================== Start ====================
+
+const updateUser = async (req, res, next) => {
+  const { id } = req.params;
+
+  // !prevent updating avatar, id, income, whidraw
+
+  if (
+    req.body.hasOwnProperty('avatar') ||
+    req.body.hasOwnProperty('id') ||
+    req.body.hasOwnProperty('income') ||
+    req.body.hasOwnProperty('whidraw')
+  ) {
+    return res
+      .status(403)
+      .json({
+        success: false,
+        message: "you are tring to update something that you can't updat ",
+      });
+  }
+
+  try {
+    const user = await User.update(req.body, { where: { id: id } });
+
+    return res
+      .status(201)
+      .json({ success: true, message: 'user updated successfully' });
+  } catch {
+    (err) => {
+      console.log(err);
+      return res.status(403).json({ success: false, error: err });
+    };
+  }
+};
+
+// *  ==================== END ====================
+
+// TODO: Update user avatar
+
+// *  ==================== Start ====================
+
+
+
+
+// *  ==================== END ====================
+
 module.exports = {
   register,
   login,
@@ -385,4 +433,5 @@ module.exports = {
   forgetPassword,
   ResetPasswordCheckUser,
   ResetPassword,
+  updateUser,
 };
