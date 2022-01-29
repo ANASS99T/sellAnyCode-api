@@ -10,6 +10,7 @@ const jwt = require('express-jwt');
 const app = express();
 
 var corOption = {
+  credentials: true,
   origin: 'http://localhost:3000',
 };
 
@@ -23,7 +24,6 @@ app.use(express.urlencoded({ extended: true }));
 
 app.use(cookieParser());
 
-
 // app.use(
 //     jwt({
 //       secret: process.env.JWT_SECRET,
@@ -31,7 +31,6 @@ app.use(cookieParser());
 //       getToken: (req) => req.cookies.token,
 //     })
 //   );
-
 
 app.use('/uploads', express.static('uploads'));
 

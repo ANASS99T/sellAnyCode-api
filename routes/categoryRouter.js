@@ -5,11 +5,11 @@ const router = require('express').Router();
 const checkAdmin = require('../middleware/checkAdmin');
 
 router.post('/', checkAdmin, categoryController.addCategory);
-router.put('/:id', categoryController.updateCategory);
-router.delete('/:id', categoryController.deleteCategory);
+router.put('/:id',checkAdmin, categoryController.updateCategory);
+router.delete('/:id',checkAdmin, categoryController.deleteCategory);
 router.get('/id/:id', categoryController.getCategoryById);
 router.get('/name/:name', categoryController.getCategoriesByName);
-router.get('/', checkAdmin, categoryController.getCategories);
+router.get('/', categoryController.getCategories);
 router.get(
   '/categories-sub',
   categoryController.getCategoriesWithSubcategories

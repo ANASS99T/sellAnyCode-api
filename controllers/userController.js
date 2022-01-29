@@ -40,7 +40,8 @@ const addUser = async (data) => {
   data.password = password;
 
   //TODO: Create user
-  const user = await User.create(data);
+  let user = await User.create(data);
+  user = user.dataValues;
   return { success: true, status: 201, message: 'User created', user };
 };
 // *  ==================== END ====================
@@ -60,11 +61,8 @@ const register = async (req, res) => {
   try {
     const addedUser = await addUser(data);
 
-    // addedUser
-    // .then(function (result) {
     if (addedUser.success) {
-      // console.log({ done: result });
-
+      const result = addedUser?.user;
       // TODO: Generate a token and log the user in
       const Refreshtoken = createRefreshToken(result, 'user');
       const AccessToken = createAccessToken(result.id, 'user');
@@ -77,7 +75,7 @@ const register = async (req, res) => {
       res.status(201).json({
         success: true,
         message: 'user created successfully.',
-        user: addedUser.user,
+        user: result,
         token: AccessToken,
       });
     } else {
@@ -86,6 +84,7 @@ const register = async (req, res) => {
         .json({ success: false, message: addedUser.message });
     }
   } catch (error) {
+    console.log(error);
     res.status(403).json({ success: false, error });
   }
 
@@ -597,6 +596,7 @@ const deleteAccount = async (req, res) => {
 // *  ==================== Start ====================
 
 const generateToken = async (req, res, next) => {
+  console.log(req.cookies);
   const token = req.cookies?.refresh_token;
 
   if (token) {
@@ -612,7 +612,7 @@ const generateToken = async (req, res, next) => {
           decoded?.data?.role
         );
         res.cookie('access_token', AccessToken, { httpOnly: true });
-        return res.status(201).json({ success: true});
+        return res.status(201).json({ success: true });
       }
     });
   } else {
@@ -624,6 +624,40 @@ const generateToken = async (req, res, next) => {
 };
 
 // *  ==================== END ====================
+
+// TODO : Log out
+
+// *  ==================== Start ====================
+
+const logOut = async (req, res, next) => {
+  res.clearCookie('refresh_token');
+  res.clearCookie('access_token');
+  return res
+    .status(200)
+    .json({ success: true, message: 'logged out successfully' });
+};
+
+// *  ==================== END ====================
+
+// TODO: Get loggedIn user info:
+
+// *  ==================== START ====================
+
+const getLoggedInUser = async (req, res) => {
+  const id = req?.user;
+  try {
+    const user = await User.findOne({
+      attributes: ['id', 'fullName', 'email', 'username', 'income', 'withdraw'],
+      where: {
+        id: id,
+      },
+    });
+    return res.status(201).json({ sucess: true, user });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ sucess: false, error: error });
+  }
+};
 
 module.exports = {
   register,
@@ -638,4 +672,6 @@ module.exports = {
   updateAvatar,
   loginAdmin,
   generateToken,
+  logOut,
+  getLoggedInUser,
 };
