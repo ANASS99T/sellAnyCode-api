@@ -5,9 +5,13 @@ require('dotenv/config');
 const fs = require('fs');
 
 // TODO: Function to Create Valide Access Token :
-const createAccessToken = (user) =>
-  jwt.sign({ data: { id: user.id } }, process.env.JWT_SECRET, {
-    expiresIn: process.env.JWT_EXPIRES_IN,
+const createRefreshToken = (user, role) =>
+  jwt.sign({ data: { id: user.id, role: role } }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_REFRESH_EXPIRES_IN,
+  });
+const createAccessToken = (id, role) =>
+  jwt.sign({ data: { id: id, role: role } }, process.env.JWT_SECRET, {
+    expiresIn: process.env.JWT_ACCESS_EXPIRES_IN,
   });
 
 // Main model
@@ -56,30 +60,35 @@ const register = async (req, res) => {
   try {
     const addedUser = await addUser(data);
 
-  // addedUser
-  // .then(function (result) {
-  if (addedUser.success) {
-    // console.log({ done: result });
-    // TODO: Generate a token and log the user in
-    const token = createAccessToken(addedUser.user);
-    res.status(201).json({
-      success: true,
-      message: 'user created successfully.',
-      user: addedUser.user,
-      token: token,
-    });
-  } else {
-    res
-      .status(addedUser.status)
-      .json({ success: false, message: addedUser.message });
+    // addedUser
+    // .then(function (result) {
+    if (addedUser.success) {
+      // console.log({ done: result });
+
+      // TODO: Generate a token and log the user in
+      const Refreshtoken = createRefreshToken(result, 'user');
+      const AccessToken = createAccessToken(result.id, 'user');
+
+      // TODO: Save the token in the cookies
+
+      res.cookie('refresh_token', Refreshtoken, { httpOnly: true });
+      res.cookie('access_token', AccessToken, { httpOnly: true });
+
+      res.status(201).json({
+        success: true,
+        message: 'user created successfully.',
+        user: addedUser.user,
+        token: AccessToken,
+      });
+    } else {
+      res
+        .status(addedUser.status)
+        .json({ success: false, message: addedUser.message });
+    }
+  } catch (error) {
+    res.status(403).json({ success: false, error });
   }
 
-  } catch (error) {
-    res
-    .status(403)
-    .json({ success: false,error });
-  }
-  
   // })
   // .catch((err) => console.log({ error: err }));
 };
@@ -111,24 +120,97 @@ const login = async (req, res) => {
   });
 
   isExist
-    .then((result) => {
+    .then(async (result) => {
       if (result && result.email) {
         // ? Check if password is correct by comparing it the password in database
-
-        if (!bcrypt.compare(data.password, result.password)) {
-          return res.status(403).json({ erreur: 'Incorrect Password' });
+        const correctPassword = await bcrypt.compare(
+          data.password,
+          result.password
+        );
+        if (!correctPassword) {
+          return res.status(403).json({ error: 'Incorrect Password' });
         }
       } else {
-        return res.status(403).json({ erreur: 'Incorrect Email' });
+        return res.status(403).json({ error: 'Incorrect Email' });
       }
 
       // TODO: Generate a token and log the user in
-      const token = createAccessToken(result);
+      const Refreshtoken = createRefreshToken(result, 'user');
+      const AccessToken = createAccessToken(result.id, 'user');
+
+      // TODO: Save the token in the cookies
+
+      res.cookie('refresh_token', Refreshtoken, { httpOnly: true });
+      res.cookie('access_token', AccessToken, { httpOnly: true });
+
       res.status(201).json({
         success: true,
         message: 'user logged in successfully.',
         user: result,
-        token: token,
+        token: AccessToken,
+      });
+    })
+    .catch((err) => {
+      console.log({ error: err });
+      res.status(403).send({ error: err });
+    });
+};
+// *  ==================== END ====================
+
+// TODO: Login admin
+// *  ==================== START ====================
+
+const loginAdmin = async (req, res) => {
+  // TODO: Load data frrom response body
+  let data = {
+    email: req.body.email,
+    password: req.body.password,
+  };
+
+  // TODO: Check email and password validation
+  if (!data.email || !data.password) {
+    return res
+      .status(403)
+      .json({ message: "S'il vous plait donner email ou mot de passe" });
+  }
+
+  // ? check if the email already exists?
+
+  const isExist = User.findOne({
+    where: {
+      email: data.email,
+    },
+  });
+
+  isExist
+    .then(async (result) => {
+      if (result && result.email) {
+        // ? Check if password is correct by comparing it the password in database
+        const correctPassword = await bcrypt.compare(
+          data.password,
+          result.password
+        );
+        if (!correctPassword) {
+          return res.status(403).json({ error: 'Incorrect Password' });
+        }
+      } else {
+        return res.status(403).json({ error: 'Incorrect Email' });
+      }
+
+      // TODO: Generate a token and log the user in
+      const Refreshtoken = createRefreshToken(result, 'admin');
+      const AccessToken = createAccessToken(result.id, 'admin');
+
+      // TODO: Save the token in the cookies
+
+      res.cookie('refresh_token', Refreshtoken, { httpOnly: true });
+      res.cookie('access_token', AccessToken, { httpOnly: true });
+
+      res.status(201).json({
+        success: true,
+        message: 'user logged in successfully.',
+        user: result,
+        token: AccessToken,
       });
     })
     .catch((err) => {
@@ -198,7 +280,7 @@ const updatePassword = async (req, res) => {
       if (!bcrypt.compare(data.oldPassword, result.password)) {
         return res
           .status(403)
-          .json({ erreur: 'your old password in incorrect!' });
+          .json({ error: 'your old password in incorrect!' });
       } else {
         // TODO: hash the new password and updata the password of the user
 
@@ -510,6 +592,39 @@ const deleteAccount = async (req, res) => {
 
 // *  ==================== END ====================
 
+// TODO : Generate access token
+
+// *  ==================== Start ====================
+
+const generateToken = async (req, res, next) => {
+  const token = req.cookies?.refresh_token;
+
+  if (token) {
+    jwt.verify(token, process.env.JWT_SECRET, (err, decoded) => {
+      if (err) {
+        console.log(err);
+        return res
+          .status(401)
+          .json({ message: 'your token is not valid, please re login' });
+      } else {
+        const AccessToken = createAccessToken(
+          decoded?.data?.id,
+          decoded?.data?.role
+        );
+        res.cookie('access_token', AccessToken, { httpOnly: true });
+        return res.status(201).json({ success: true});
+      }
+    });
+  } else {
+    console.log(token);
+    return res
+      .status(401)
+      .json({ message: 'your token is not valid, please re login' });
+  }
+};
+
+// *  ==================== END ====================
+
 module.exports = {
   register,
   login,
@@ -521,4 +636,6 @@ module.exports = {
   updateUser,
   deleteAccount,
   updateAvatar,
+  loginAdmin,
+  generateToken,
 };

@@ -15,7 +15,7 @@ module.exports = async (req, res, next) => {
           .status(401)
           .json({ message: 'Your token is not valid, please re login' });
       } else {
-        if (decoded?.data?.role === 'user') {
+        if (decoded?.data?.role === 'admin') {
           req.user = decoded?.data?.id;
           req.role = decoded?.data?.role;
           next();
