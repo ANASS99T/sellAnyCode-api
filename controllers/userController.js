@@ -248,7 +248,7 @@ const getUserById = async (req, res) => {
 const updatePassword = async (req, res) => {
   // Get data from request body
   let data = {
-    id: req.body.id,
+    id: req?.user,
     oldPassword: req.body.oldPassword,
     newPassword: req.body.newPassword,
     confirmPassword: req.body.confirmPassword,
