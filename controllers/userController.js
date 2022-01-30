@@ -248,7 +248,7 @@ const getUserById = async (req, res) => {
 const updatePassword = async (req, res) => {
   // Get data from request body
   let data = {
-    id: req.body.id,
+    id: req?.user,
     oldPassword: req.body.oldPassword,
     newPassword: req.body.newPassword,
     confirmPassword: req.body.confirmPassword,
@@ -472,8 +472,9 @@ const ResetPassword = async (req, res) => {
 // *  ==================== Start ====================
 
 const updateUser = async (req, res, next) => {
-  const { id } = req.params;
+  const id = req?.user;
 
+  // console.log(id)
   // !prevent updating avatar, id, income, whidraw
 
   if (

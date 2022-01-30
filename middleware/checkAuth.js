@@ -18,6 +18,8 @@ module.exports = async (req, res, next) => {
         if (decoded?.data?.role === 'user') {
           req.user = decoded?.data?.id;
           req.role = decoded?.data?.role;
+
+          // console.log(req.user)
           next();
         } else {
           return res
