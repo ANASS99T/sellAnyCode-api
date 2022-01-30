@@ -90,4 +90,6 @@ router.get('/user/:user', productController.getProductsByUser);
 router.delete('/:id', productController.deleteProduct);
 router.get('/', productController.getAllProducts);
 
+router.post('/whishlist_prod', productController.addProductToWhislist);
+
 module.exports = router;
