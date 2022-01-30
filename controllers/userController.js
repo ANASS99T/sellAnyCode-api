@@ -472,8 +472,9 @@ const ResetPassword = async (req, res) => {
 // *  ==================== Start ====================
 
 const updateUser = async (req, res, next) => {
-  const { id } = req.params;
+  const id = req?.user;
 
+  // console.log(id)
   // !prevent updating avatar, id, income, whidraw
 
   if (
