@@ -20,7 +20,7 @@ const storage = multer.diskStorage({
 
 const fileFilter = (req, file, cb) => {
   // Accpet file
-  if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg')
+  if (file.mimetype === 'image/png' || file.mimetype === 'image/jpg' || file.mimetype === 'image/jpeg')
     cb(null, true);
   // Reject file
   else cb(new Error('file type not supported'), false);
@@ -48,7 +48,7 @@ router.put('/', checkAuth, userController.updateUser);
 router.delete('/:id', checkAuth, userController.deleteAccount);
 router.post('/logged-in', checkAuth, userController.getLoggedInUser);
 router.put(
-  '/avatar/:id',
+  '/avatar',
   checkAuth,
   upload.single('avatar'),
   userController.updateAvatar
