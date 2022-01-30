@@ -16,6 +16,7 @@ const Whishlist = db.wishlists;
 // *  ==================== START ====================
 
 const addProduct = async (req, res, next) => {
+  // return console.log(req.files)
   let data = {
     name: req.body.name,
     shortDescription: req.body.shortDescription,
@@ -26,7 +27,7 @@ const addProduct = async (req, res, next) => {
     priceMultiple: req.body.priceMultiple,
     category: req.body.category,
     subcategory: req.body.subcategory,
-    user: req.body.user,
+    user: req?.user,
     operatingSystems: req.body.operatingSystems
       ? req.body.operatingSystems
       : null,
@@ -87,57 +88,57 @@ const addProduct = async (req, res, next) => {
     console.log(error);
     // TODO: Remove all added files in case of error
     data.icon &&
-      fs.unlink(`uploads/product/${data.icon[0].filename}`, (err) => {
+      fs.unlink(`uploads/product/${data.icon.filename}`, (err) => {
         if (err) return console.log(err);
         console.log('icon file deleted successfully');
       });
     data.preview &&
-      fs.unlink(`uploads/product/${data.preview[0].filename}`, (err) => {
+      fs.unlink(`uploads/product/${data.preview.filename}`, (err) => {
         if (err) return console.log(err);
         console.log('preview file deleted successfully');
       });
     data.screenshot1 &&
-      fs.unlink(`uploads/product/${data.screenshot1[0].filename}`, (err) => {
+      fs.unlink(`uploads/product/${data.screenshot1.filename}`, (err) => {
         if (err) return console.log(err);
         console.log('screenshot1 file deleted successfully');
       });
     data.screenshot2 &&
-      fs.unlink(`uploads/product/${data.screenshot2[0].filename}`, (err) => {
+      fs.unlink(`uploads/product/${data.screenshot2.filename}`, (err) => {
         if (err) return console.log(err);
         console.log('screenshot2 file deleted successfully');
       });
     data.screenshot3 &&
-      fs.unlink(`uploads/product/${data.screenshot3[0].filename}`, (err) => {
+      fs.unlink(`uploads/product/${data.screenshot3.filename}`, (err) => {
         if (err) return console.log(err);
         console.log('screenshot3 file deleted successfully');
       });
     data.screenshot4 &&
-      fs.unlink(`uploads/product/${data.screenshot4[0].filename}`, (err) => {
+      fs.unlink(`uploads/product/${data.screenshot4.filename}`, (err) => {
         if (err) return console.log(err);
         console.log('screenshot4 file deleted successfully');
       });
     data.screenshot5 &&
-      fs.unlink(`uploads/product/${data.screenshot5[0].filename}`, (err) => {
+      fs.unlink(`uploads/product/${data.screenshot5.filename}`, (err) => {
         if (err) return console.log(err);
         console.log('screenshot5 file deleted successfully');
       });
     data.screenshot6 &&
-      fs.unlink(`uploads/product/${data.screenshot6[0].filename}`, (err) => {
+      fs.unlink(`uploads/product/${data.screenshot6.filename}`, (err) => {
         if (err) return console.log(err);
         console.log('screenshot6 file deleted successfully');
       });
     data.screenshot7 &&
-      fs.unlink(`uploads/product/${data.screenshot7[0].filename}`, (err) => {
+      fs.unlink(`uploads/product/${data.screenshot7.filename}`, (err) => {
         if (err) return console.log(err);
         console.log('screenshot7 file deleted successfully');
       });
     data.screenshot8 &&
-      fs.unlink(`uploads/product/${data.screenshot8[0].filename}`, (err) => {
+      fs.unlink(`uploads/product/${data.screenshot8.filename}`, (err) => {
         if (err) return console.log(err);
         console.log('screenshot8 file deleted successfully');
       });
     data.mainZip &&
-      fs.unlink(`uploads/product/${data.mainZip[0].filename}`, (err) => {
+      fs.unlink(`uploads/product/${data.mainZip.filename}`, (err) => {
         if (err) return console.log(err);
         console.log('mainZip file deleted successfully');
       });
@@ -186,7 +187,7 @@ const updateProduct = async (req, res, next) => {
       subcategory: req.body.subcategory
         ? req.body.subcategory
         : selectedProduct.subcategory,
-      user: req.body.user ? req.body.user : selectedProduct.user,
+      user: req?.user ? req?.user : selectedProduct.user,
       operatingSystems: req.body.operatingSystems
         ? req.body.operatingSystems
         : selectedProduct.operatingSystems,

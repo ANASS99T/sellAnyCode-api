@@ -2,7 +2,8 @@ const categoryController = require('../controllers/categoryController');
 const router = require('express').Router();
 
 //middleware
-const checkAdmin = require('../middleware/checkAdmin');
+// const checkAdmin = require('../middleware/checkAdmin');
+const checkAdmin = require('../middleware/checkAuth');
 
 router.post('/', checkAdmin, categoryController.addCategory);
 router.put('/:id',checkAdmin, categoryController.updateCategory);

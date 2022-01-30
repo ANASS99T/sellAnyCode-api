@@ -44,7 +44,7 @@ router.put('/password', checkAuth, userController.updatePassword);
 router.post('/reset-password', userController.forgetPassword);
 router.get('/reset-password/:id/:token', userController.ResetPasswordCheckUser);
 router.put('/reset-password/', userController.ResetPassword);
-router.put('/:id', checkAuth, userController.updateUser);
+router.put('/', checkAuth, userController.updateUser);
 router.delete('/:id', checkAuth, userController.deleteAccount);
 router.post('/logged-in', checkAuth, userController.getLoggedInUser);
 router.put(
