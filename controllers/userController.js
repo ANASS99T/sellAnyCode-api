@@ -647,7 +647,6 @@ const getLoggedInUser = async (req, res) => {
   const id = req?.user;
   try {
     const user = await User.findOne({
-      attributes: ['id', 'fullName', 'email', 'username', 'income', 'withdraw'],
       where: {
         id: id,
       },
