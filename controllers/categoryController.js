@@ -17,6 +17,7 @@ const addCategory = async (req, res, next) => {
   };
   try {
     const category = await Category.create(data);
+    console.log(req.cookies.token)
     return res.status(201).json({
       success: true,
       message: 'Category added successfully',

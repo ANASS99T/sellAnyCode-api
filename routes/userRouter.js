@@ -3,6 +3,7 @@ const router = require('express').Router();
 
 //middleware
 const checkAuth = require('../middleware/checkAuth');
+const checkAdmin = require('../middleware/checkAdmin');
 
 // Using multer
 
@@ -33,8 +34,11 @@ const upload = multer({
   fileFilter: fileFilter,
 });
 
+router.get('/jwt', userController.generateToken);
 router.post('/register', userController.register);
 router.post('/login', userController.login);
+router.get('/logout', userController.logOut);
+router.post('/admin/login', userController.loginAdmin);
 router.get('/:id', userController.getUserById);
 router.put('/password', checkAuth, userController.updatePassword);
 router.post('/reset-password', userController.forgetPassword);
@@ -42,6 +46,7 @@ router.get('/reset-password/:id/:token', userController.ResetPasswordCheckUser);
 router.put('/reset-password/', userController.ResetPassword);
 router.put('/:id', checkAuth, userController.updateUser);
 router.delete('/:id', checkAuth, userController.deleteAccount);
+router.post('/logged-in', checkAuth, userController.getLoggedInUser);
 router.put(
   '/avatar/:id',
   checkAuth,
