@@ -8,6 +8,8 @@ const Product = db.products;
 const User = db.users;
 const Category = db.categories;
 const Subctegory = db.subcategories;
+const Whishlist = db.wishlists;
+
 
 // TODO: Add product
 
@@ -438,6 +440,9 @@ const getAllProducts = async (req, res, next) => {
 };
 
 // *  ==================== END ====================
+
+//** Products Filters **/
+
 // TODO: Get products by category
 
 // *  ==================== START ====================
@@ -751,6 +756,53 @@ const deleteProduct = async (req, res, next) => {
 
 // *  ==================== END ====================
 
+
+//** Whislist Fcts**//
+// TODO: Add Product To Whislist
+// *  ==================== START ====================
+
+const addProductToWhislist = async (req, res, next) => {
+  const data = {
+    user: req.body.userid,
+    product: req.body.prodid,
+  };
+  try {
+    const wishlistprod = await Whishlist.create(data);
+    console.log(req.cookies.token)
+    return res.status(201).json({
+      success: true,
+      message: 'Product added successfully to the whishlist',
+      wishlistprod,
+    });
+  } catch (error) {
+    return res.status(403).json({ success: false, error: error });
+  }
+};
+
+// *  ==================== END ====================
+
+// TODO: Delete the product from whishlist 
+
+// *  ==================== START ====================
+
+const deleteWhislistProd = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await Whishlist.destroy({ where: { id: id } });
+    return res
+      .status(201)
+      .json({ success: true, message: 'The product has removed successfully' });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(403)
+      .json({ success: false, error: 'An error occurred!' });
+  }
+};
+
+// *  ==================== END ====================
+
+
 module.exports = {
   addProduct,
   updateProduct,
@@ -760,5 +812,7 @@ module.exports = {
   getProductsByName,
   getProductsByUser,
   deleteProduct,
-  getAllProducts
+  getAllProducts,
+  addProductToWhislist,
+  deleteWhislistProd
 };

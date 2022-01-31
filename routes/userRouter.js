@@ -53,5 +53,7 @@ router.put(
   upload.single('avatar'),
   userController.updateAvatar
 );
+router.post('/mywhishlist', checkAuth,userController.getWhishlistByUser);
+
 
 module.exports = router;
