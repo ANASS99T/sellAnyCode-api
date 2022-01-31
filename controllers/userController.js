@@ -261,11 +261,15 @@ const updatePassword = async (req, res) => {
 
   // ? check if the id comes from the user is the same in the request?
 
-  if (data.id === req.userId) {
+  // console.log(data.id, )
+  if (data.id === req.user) {
     // TODO: Get the user with the id
 
     const user = User.findOne({ where: { id: data.id } });
-    user.then((result) => {
+    user.then(async (result) => {
+      // return console.log(result);
+      const user = result
+      // return console.log(user.password)
       // ?  Check if the password and confirm password matches ?
 
       if (data.newPassword !== data.confirmPassword) {
@@ -275,13 +279,14 @@ const updatePassword = async (req, res) => {
         });
       }
 
-      console.log(data);
-      console.log(
-        "comparing passwords: ",
-        bcrypt.compare(data.oldPassword, result.password)
-      );
+      // console.log(data);
+      // console.log(
+      //   'comparing passwords: ',
+      //   bcrypt.compare(data.oldPassword, result.password)
+      // );
+      // return console.log(data.oldPassword, user.password)
       // ? Check if oldPassword and user password matches ?
-      if (!bcrypt.compare(data.oldPassword, result.password)) {
+      if (await !bcrypt.compare(data.oldPassword, user.password)) {
         return res
           .status(403)
           .json({ error: "your old password in incorrect!" });
@@ -293,7 +298,7 @@ const updatePassword = async (req, res) => {
           .then((data) => {
             const newData = User.update(
               { password: data },
-              { where: { id: result.id } }
+              { where: { id: user.id } }
             );
 
             newData
@@ -521,7 +526,7 @@ const updateUser = async (req, res, next) => {
 // *  ==================== Start ====================
 
 const updateAvatar = async (req, res, next) => {
-  const { id } = req.params;
+  const id = req.user;
 
   // ? check if the user exists :
 
