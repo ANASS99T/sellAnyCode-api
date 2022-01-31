@@ -3,6 +3,8 @@ const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
 require("dotenv/config");
 const fs = require("fs");
+const mail = require("./MailSender");
+
 
 // TODO: Function to Create Valide Access Token :
 const createRefreshToken = (user, role) =>
@@ -353,6 +355,9 @@ const forgetPassword = async (req, res, next) => {
         console.log(link);
 
         // TODO: Send the link to the user by email
+        mail(process.env.EMAIL, process.env.EMAILPASSWORD, email, 'Reset your password', `You can use the link bellow to reset your password: <${link}> By clicking the link you will be redirected to the website where you can enter a new password and to confirm it.
+        Thank you for using our service`)
+
 
         return res.status(201).json({
           success: true,
