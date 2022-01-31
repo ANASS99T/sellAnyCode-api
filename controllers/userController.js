@@ -1,8 +1,8 @@
-const db = require('../models');
-const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
-require('dotenv/config');
-const fs = require('fs');
+const db = require("../models");
+const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+require("dotenv/config");
+const fs = require("fs");
 
 // TODO: Function to Create Valide Access Token :
 const createRefreshToken = (user, role) =>
@@ -17,6 +17,9 @@ const createAccessToken = (id, role) =>
 // Main model
 
 const User = db.users;
+const Whishlist = db.wishlists;
+const Category = db.categories;
+const Subctegory = db.subcategories;
 
 //TODO: Add user
 // *  ==================== START ====================
@@ -24,14 +27,14 @@ const addUser = async (data) => {
   // ? check if the email already exists?
 
   const isExist = await User.findOne({
-    attributes: ['email'],
+    attributes: ["email"],
     where: {
       email: data.email,
     },
   });
 
   if (isExist && isExist.email === data.email) {
-    return { success: false, status: 403, message: 'Email already exists' };
+    return { success: false, status: 403, message: "Email already exists" };
   }
 
   // TODO: generate a hashed password
@@ -42,7 +45,7 @@ const addUser = async (data) => {
   //TODO: Create user
   let user = await User.create(data);
   user = user.dataValues;
-  return { success: true, status: 201, message: 'User created', user };
+  return { success: true, status: 201, message: "User created", user };
 };
 // *  ==================== END ====================
 
@@ -64,17 +67,17 @@ const register = async (req, res) => {
     if (addedUser.success) {
       const result = addedUser?.user;
       // TODO: Generate a token and log the user in
-      const Refreshtoken = createRefreshToken(result, 'user');
-      const AccessToken = createAccessToken(result.id, 'user');
+      const Refreshtoken = createRefreshToken(result, "user");
+      const AccessToken = createAccessToken(result.id, "user");
 
       // TODO: Save the token in the cookies
 
-      res.cookie('refresh_token', Refreshtoken, { httpOnly: true });
-      res.cookie('access_token', AccessToken, { httpOnly: true });
+      res.cookie("refresh_token", Refreshtoken, { httpOnly: true });
+      res.cookie("access_token", AccessToken, { httpOnly: true });
 
       res.status(201).json({
         success: true,
-        message: 'user created successfully.',
+        message: "user created successfully.",
         user: result,
         token: AccessToken,
       });
@@ -127,24 +130,24 @@ const login = async (req, res) => {
           result.password
         );
         if (!correctPassword) {
-          return res.status(403).json({ error: 'Incorrect Password' });
+          return res.status(403).json({ error: "Incorrect Password" });
         }
       } else {
-        return res.status(403).json({ error: 'Incorrect Email' });
+        return res.status(403).json({ error: "Incorrect Email" });
       }
 
       // TODO: Generate a token and log the user in
-      const Refreshtoken = createRefreshToken(result, 'user');
-      const AccessToken = createAccessToken(result.id, 'user');
+      const Refreshtoken = createRefreshToken(result, "user");
+      const AccessToken = createAccessToken(result.id, "user");
 
       // TODO: Save the token in the cookies
 
-      res.cookie('refresh_token', Refreshtoken, { httpOnly: true });
-      res.cookie('access_token', AccessToken, { httpOnly: true });
+      res.cookie("refresh_token", Refreshtoken, { httpOnly: true });
+      res.cookie("access_token", AccessToken, { httpOnly: true });
 
       res.status(201).json({
         success: true,
-        message: 'user logged in successfully.',
+        message: "user logged in successfully.",
         user: result,
         token: AccessToken,
       });
@@ -190,24 +193,24 @@ const loginAdmin = async (req, res) => {
           result.password
         );
         if (!correctPassword) {
-          return res.status(403).json({ error: 'Incorrect Password' });
+          return res.status(403).json({ error: "Incorrect Password" });
         }
       } else {
-        return res.status(403).json({ error: 'Incorrect Email' });
+        return res.status(403).json({ error: "Incorrect Email" });
       }
 
       // TODO: Generate a token and log the user in
-      const Refreshtoken = createRefreshToken(result, 'admin');
-      const AccessToken = createAccessToken(result.id, 'admin');
+      const Refreshtoken = createRefreshToken(result, "admin");
+      const AccessToken = createAccessToken(result.id, "admin");
 
       // TODO: Save the token in the cookies
 
-      res.cookie('refresh_token', Refreshtoken, { httpOnly: true });
-      res.cookie('access_token', AccessToken, { httpOnly: true });
+      res.cookie("refresh_token", Refreshtoken, { httpOnly: true });
+      res.cookie("access_token", AccessToken, { httpOnly: true });
 
       res.status(201).json({
         success: true,
-        message: 'user logged in successfully.',
+        message: "user logged in successfully.",
         user: result,
         token: AccessToken,
       });
@@ -266,20 +269,20 @@ const updatePassword = async (req, res) => {
       if (data.newPassword !== data.confirmPassword) {
         return res.status(403).json({
           success: false,
-          message: 'password and confirm password do not match',
+          message: "password and confirm password do not match",
         });
       }
 
       console.log(data);
       console.log(
-        'comparing passwords: ',
+        "comparing passwords: ",
         bcrypt.compare(data.oldPassword, result.password)
       );
       // ? Check if oldPassword and user password matches ?
       if (!bcrypt.compare(data.oldPassword, result.password)) {
         return res
           .status(403)
-          .json({ error: 'your old password in incorrect!' });
+          .json({ error: "your old password in incorrect!" });
       } else {
         // TODO: hash the new password and updata the password of the user
 
@@ -295,7 +298,7 @@ const updatePassword = async (req, res) => {
               .then((data) => {
                 return res.status(201).json({
                   success: true,
-                  message: 'Password updated successfully',
+                  message: "Password updated successfully",
                 });
               })
               .catch((err) => {
@@ -312,7 +315,7 @@ const updatePassword = async (req, res) => {
   } else {
     return res
       .status(403)
-      .json({ success: false, message: 'User ID not match!' });
+      .json({ success: false, message: "User ID not match!" });
   }
 };
 
@@ -342,7 +345,7 @@ const forgetPassword = async (req, res, next) => {
 
         // Generate a token
 
-        const token = jwt.sign(payload, secret, { expiresIn: '5m' });
+        const token = jwt.sign(payload, secret, { expiresIn: "5m" });
 
         // Example of link : http://localost:5000/152{user_id}/qweqweqweqweqwe{token}
         const link = process.env.LINK + `/reset-password/${result.id}/${token}`;
@@ -353,7 +356,7 @@ const forgetPassword = async (req, res, next) => {
 
         return res.status(201).json({
           success: true,
-          message: 'Reset link generated successfully',
+          message: "Reset link generated successfully",
           link: link,
         });
       } else {
@@ -398,7 +401,7 @@ const ResetPasswordCheckUser = async (req, res, next) => {
       } else {
         return res
           .status(403)
-          .json({ success: false, message: 'User not exists' });
+          .json({ success: false, message: "User not exists" });
       }
     })
     .catch((err) => {
@@ -427,7 +430,7 @@ const ResetPassword = async (req, res) => {
         if (password !== confirmPassword) {
           return res.status(403).json({
             success: false,
-            message: 'password and confirm password not match',
+            message: "password and confirm password not match",
           });
         }
 
@@ -435,7 +438,7 @@ const ResetPassword = async (req, res) => {
         const secret = process.env.JWT_SECRET + user.password;
 
         try {
-          const token = req.headers.authorization.split(' ')[1];
+          const token = req.headers.authorization.split(" ")[1];
           // Verifying the token
           const payload = jwt.verify(token, secret);
 
@@ -447,7 +450,7 @@ const ResetPassword = async (req, res) => {
             User.update({ password: pass }, { where: { id: id } });
             return res
               .status(200)
-              .json({ success: true, message: 'password reset successfully' });
+              .json({ success: true, message: "password reset successfully" });
           });
         } catch (error) {
           console.log(error);
@@ -456,7 +459,7 @@ const ResetPassword = async (req, res) => {
       } else {
         return res
           .status(403)
-          .json({ success: false, message: 'Invalid user' });
+          .json({ success: false, message: "Invalid user" });
       }
     })
     .catch((err) => {
@@ -478,10 +481,10 @@ const updateUser = async (req, res, next) => {
   // !prevent updating avatar, id, income, whidraw
 
   if (
-    req.body.hasOwnProperty('avatar') ||
-    req.body.hasOwnProperty('id') ||
-    req.body.hasOwnProperty('income') ||
-    req.body.hasOwnProperty('whidraw')
+    req.body.hasOwnProperty("avatar") ||
+    req.body.hasOwnProperty("id") ||
+    req.body.hasOwnProperty("income") ||
+    req.body.hasOwnProperty("whidraw")
   ) {
     return res.status(403).json({
       success: false,
@@ -491,13 +494,13 @@ const updateUser = async (req, res, next) => {
 
   try {
     const user = await User.update(
-      { ...req.body, fullName: 'Anass' },
+      { ...req.body, fullName: "Anass" },
       { where: { id: id } }
     );
 
     return res
       .status(201)
-      .json({ success: true, message: 'user updated successfully' });
+      .json({ success: true, message: "user updated successfully" });
   } catch {
     (err) => {
       console.log(err);
@@ -528,13 +531,13 @@ const updateAvatar = async (req, res, next) => {
           fs.unlink(`uploads/avatar/${isExist.avatar}`, (err) => {
             if (err)
               return res.status(403).json({ success: false, error: err });
-            console.log('file deleted successfully');
+            console.log("file deleted successfully");
           });
 
         await User.update({ avatar: null }, { where: { id: id } });
         return res
           .status(201)
-          .json({ success: true, message: 'avatar successfully' });
+          .json({ success: true, message: "avatar successfully" });
       }
 
       await User.update({ avatar: req.file.filename }, { where: { id: id } });
@@ -543,12 +546,12 @@ const updateAvatar = async (req, res, next) => {
       isExist.avatar !== null &&
         fs.unlink(`uploads/avatar/${isExist.avatar}`, (err) => {
           if (err) return res.status(403).json({ success: false, error: err });
-          console.log('file deleted successfully');
+          console.log("file deleted successfully");
         });
 
       return res
         .status(201)
-        .json({ success: true, message: 'avatar successfully' });
+        .json({ success: true, message: "avatar successfully" });
     } catch {
       (err) => {
         console.log(err);
@@ -558,10 +561,10 @@ const updateAvatar = async (req, res, next) => {
   } else {
     fs.unlink(`uploads/avatar/${req.file.filename}`, (err) => {
       if (err) return res.status(403).json({ success: false, error: err });
-      console.log('file deleted successfully');
+      console.log("file deleted successfully");
     });
 
-    return res.status(403).json({ success: false, message: 'Not valid ID' });
+    return res.status(403).json({ success: false, message: "Not valid ID" });
   }
 
   // throw "Testing error"
@@ -581,7 +584,7 @@ const deleteAccount = async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: 'User deleted successfully' });
+      .json({ success: true, message: "User deleted successfully" });
   } catch {
     (err) => {
       console.log(err);
@@ -606,13 +609,13 @@ const generateToken = async (req, res, next) => {
         console.log(err);
         return res
           .status(401)
-          .json({ message: 'your token is not valid, please re login' });
+          .json({ message: "your token is not valid, please re login" });
       } else {
         const AccessToken = createAccessToken(
           decoded?.data?.id,
           decoded?.data?.role
         );
-        res.cookie('access_token', AccessToken, { httpOnly: true });
+        res.cookie("access_token", AccessToken, { httpOnly: true });
         return res.status(201).json({ success: true });
       }
     });
@@ -620,7 +623,7 @@ const generateToken = async (req, res, next) => {
     console.log(token);
     return res
       .status(401)
-      .json({ message: 'your token is not valid, please re login' });
+      .json({ message: "your token is not valid, please re login" });
   }
 };
 
@@ -631,11 +634,11 @@ const generateToken = async (req, res, next) => {
 // *  ==================== Start ====================
 
 const logOut = async (req, res, next) => {
-  res.clearCookie('refresh_token');
-  res.clearCookie('access_token');
+  res.clearCookie("refresh_token");
+  res.clearCookie("access_token");
   return res
     .status(200)
-    .json({ success: true, message: 'logged out successfully' });
+    .json({ success: true, message: "logged out successfully" });
 };
 
 // *  ==================== END ====================
@@ -659,6 +662,68 @@ const getLoggedInUser = async (req, res) => {
   }
 };
 
+//** Whislist **/
+// TODO: Get whishlist by user
+// *  ==================== START ====================
+
+const getWhishlistByUser = async (req, res, next) => {
+  const user  = req.user;
+
+  try {
+
+    let whislistprod = await Whishlist.findAll({
+      where: { user: user },
+    });
+    // console.log(whislistprod)
+    let list = [];
+    await Promise.all(
+      whislistprod.map(async (whislistprod) => {
+        // update user id to user info
+        let defaultUser = await User.findOne({
+          where: { id: whislistprod.user },
+        });
+        defaultUser = defaultUser.dataValues;
+        let user = {
+          fullName: defaultUser.fullName,
+          username: defaultUser.username,
+          email: defaultUser.email,
+        };
+
+        whislistprod.user = user;
+
+        // update category id to category info
+        let category = await Category.findOne({
+          whre: { id: whislistprod.category },
+        });
+        category = category.dataValues;
+
+        // update subcategory id to subcategory info
+        let subcategory = await Subctegory.findOne({
+          whre: { id: whislistprod.subcategory },
+        });
+
+        subcategory = subcategory.dataValues;
+
+        const obj = await {
+          ...whislistprod.dataValues,
+          user: user,
+          category: category,
+          subcategory: subcategory,
+        };
+        await list.push(obj);
+      })
+    );
+
+    return res.status(201).json({ success: true, whislistprod: list });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ success: false, error });
+  }
+};
+
+
+// *  ==================== END ====================
+
 module.exports = {
   register,
   login,
@@ -674,4 +739,5 @@ module.exports = {
   generateToken,
   logOut,
   getLoggedInUser,
+  getWhishlistByUser,
 };

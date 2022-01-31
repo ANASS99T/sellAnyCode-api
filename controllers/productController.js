@@ -781,6 +781,27 @@ const addProductToWhislist = async (req, res, next) => {
 
 // *  ==================== END ====================
 
+// TODO: Delete the product from whishlist 
+
+// *  ==================== START ====================
+
+const deleteWhislistProd = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await Whishlist.destroy({ where: { id: id } });
+    return res
+      .status(201)
+      .json({ success: true, message: 'The product has removed successfully' });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(403)
+      .json({ success: false, error: 'An error occurred!' });
+  }
+};
+
+// *  ==================== END ====================
+
 
 module.exports = {
   addProduct,
@@ -792,5 +813,6 @@ module.exports = {
   getProductsByUser,
   deleteProduct,
   getAllProducts,
-  addProductToWhislist
+  addProductToWhislist,
+  deleteWhislistProd
 };
