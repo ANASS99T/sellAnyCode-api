@@ -20,8 +20,8 @@ const createAccessToken = (id, role) =>
 
 const User = db.users;
 const Whishlist = db.wishlists;
-const Category = db.categories;
-const Subctegory = db.subcategories;
+const Product = db.products;
+
 
 //TODO: Add user
 // *  ==================== START ====================
@@ -360,7 +360,7 @@ const forgetPassword = async (req, res, next) => {
         console.log(link);
 
         // TODO: Send the link to the user by email
-        mail(process.env.EMAIL, process.env.EMAILPASSWORD, email, 'Reset your password', `You can use the link bellow to reset your password: <${link}> By clicking the link you will be redirected to the website where you can enter a new password and to confirm it.
+        mail( email, 'Reset your password', `You can use the link bellow to reset your password: <${link}> By clicking the link you will be redirected to the website where you can enter a new password and to confirm it.
         Thank you for using our service`)
 
 
@@ -681,16 +681,16 @@ const getWhishlistByUser = async (req, res, next) => {
 
   try {
 
-    let whislistprod = await Whishlist.findAll({
+    let wishlistprod = await Whishlist.findAll({
       where: { user: user },
     });
     // console.log(whislistprod)
     let list = [];
     await Promise.all(
-      whislistprod.map(async (whislistprod) => {
+      wishlistprod.map(async (wishlistprod) => {
         // update user id to user info
         let defaultUser = await User.findOne({
-          where: { id: whislistprod.user },
+          where: { id: wishlistprod.user },
         });
         defaultUser = defaultUser.dataValues;
         let user = {
@@ -699,32 +699,24 @@ const getWhishlistByUser = async (req, res, next) => {
           email: defaultUser.email,
         };
 
-        whislistprod.user = user;
-
-        // update category id to category info
-        let category = await Category.findOne({
-          whre: { id: whislistprod.category },
+        wishlistprod.user = user;
+        // update produit id to produit info
+        let product = await Product.findOne({
+          whre: { id: wishlistprod.product },
         });
-        category = category.dataValues;
+        product = product.dataValues;
 
-        // update subcategory id to subcategory info
-        let subcategory = await Subctegory.findOne({
-          whre: { id: whislistprod.subcategory },
-        });
-
-        subcategory = subcategory.dataValues;
 
         const obj = await {
-          ...whislistprod.dataValues,
+          ...wishlistprod.dataValues,
           user: user,
-          category: category,
-          subcategory: subcategory,
+          product: product
         };
         await list.push(obj);
       })
     );
 
-    return res.status(201).json({ success: true, whislistprod: list });
+    return res.status(201).json({ success: true, wishlistprod: list });
   } catch (error) {
     console.log(error);
     return res.status(403).json({ success: false, error });
