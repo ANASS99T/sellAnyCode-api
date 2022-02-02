@@ -19,9 +19,10 @@ const storage = multer.diskStorage({
 
 //   a filter for images
 const fileFilter = (req, file, cb) => {
+  console.log(file.mimetype);
   // Accpet file
   if (file.fieldname === 'mainZip') {
-    if (file.mimetype === 'application/zip') {
+    if (file.mimetype === 'application/zip' || file.mimetype === 'application/x-zip-compressed') {
       cb(null, true);
     } else {
       // Reject file

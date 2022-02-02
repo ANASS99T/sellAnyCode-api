@@ -16,6 +16,7 @@ const Whishlist = db.wishlists;
 // *  ==================== START ====================
 
 const addProduct = async (req, res, next) => {
+
   // return console.log(req.files)
   let data = {
     name: req.body.name,
@@ -43,33 +44,33 @@ const addProduct = async (req, res, next) => {
       : null,
     database: req.body.database ? req.body.database : null,
 
-    icon: req.files.icon[0].filename,
-    preview: req.files.preview[0].filename,
-    screenshot1: req.files.screenshot1
-      ? req.files.screenshot1[0].filename
+    icon: req.files?.icon[0].filename,
+    preview: req.files?.preview[0].filename,
+    screenshot1: req.files?.screenshot1
+      ? req.files?.screenshot1[0].filename
       : null,
-    screenshot2: req.files.screenshot2
-      ? req.files.screenshot2[0].filename
+    screenshot2: req.files?.screenshot2
+      ? req.files?.screenshot2[0].filename
       : null,
-    screenshot3: req.files.screenshot3
-      ? req.files.screenshot3[0].filename
+    screenshot3: req.files?.screenshot3
+      ? req.files?.screenshot3[0].filename
       : null,
-    screenshot4: req.files.screenshot4
-      ? req.files.screenshot4[0].filename
+    screenshot4: req.files?.screenshot4
+      ? req.files?.screenshot4[0].filename
       : null,
-    screenshot5: req.files.screenshot5
-      ? req.files.screenshot5[0].filename
+    screenshot5: req.files?.screenshot5
+      ? req.files?.screenshot5[0].filename
       : null,
-    screenshot6: req.files.screenshot6
-      ? req.files.screenshot6[0].filename
+    screenshot6: req.files?.screenshot6
+      ? req.files?.screenshot6[0].filename
       : null,
-    screenshot7: req.files.screenshot7
-      ? req.files.screenshot7[0].filename
+    screenshot7: req.files?.screenshot7
+      ? req.files?.screenshot7[0].filename
       : null,
-    screenshot8: req.files.screenshot8
-      ? req.files.screenshot8[0].filename
+    screenshot8: req.files?.screenshot8
+      ? req.files?.screenshot8[0].filename
       : null,
-    mainZip: req.files.mainZip ? req.files.mainZip[0].filename : null,
+    mainZip: req.files?.mainZip ? req.files?.mainZip[0].filename : null,
   };
 
   // Create the product
@@ -214,48 +215,48 @@ const updateProduct = async (req, res, next) => {
         : selectedProduct.operatingSystems,
 
       icon:
-        req.files && req.files.icon
-          ? req.files.icon[0].filename
+        req.files && req.files?.icon
+          ? req.files?.icon[0].filename
           : selectedProduct.icon,
       preview:
-        req.files && req.files.preview
-          ? req.files.preview[0].filename
+        req.files && req.files?.preview
+          ? req.files?.preview[0].filename
           : selectedProduct.preview,
       screenshot1:
-        req.files && req.files.screenshot1
-          ? req.files.screenshot1[0].filename
+        req.files && req.files?.screenshot1
+          ? req.files?.screenshot1[0].filename
           : selectedProduct.screenshot1,
       screenshot2:
-        req.files && req.files.screenshot2
-          ? req.files.screenshot2[0].filename
+        req.files && req.files?.screenshot2
+          ? req.files?.screenshot2[0].filename
           : selectedProduct.screenshot2,
       screenshot3:
-        req.files && req.files.screenshot3
-          ? req.files.screenshot3[0].filename
+        req.files && req.files?.screenshot3
+          ? req.files?.screenshot3[0].filename
           : selectedProduct.screenshot3,
       screenshot4:
-        req.files && req.files.screenshot4
-          ? req.files.screenshot4[0].filename
+        req.files && req.files?.screenshot4
+          ? req.files?.screenshot4[0].filename
           : selectedProduct.screenshot4,
       screenshot5:
-        req.files && req.files.screenshot5
-          ? req.files.screenshot5[0].filename
+        req.files && req.files?.screenshot5
+          ? req.files?.screenshot5[0].filename
           : selectedProduct.screenshot5,
       screenshot6:
-        req.files && req.files.screenshot6
-          ? req.files.screenshot6[0].filename
+        req.files && req.files?.screenshot6
+          ? req.files?.screenshot6[0].filename
           : selectedProduct.screenshot6,
       screenshot7:
-        req.files && req.files.screenshot7
-          ? req.files.screenshot7[0].filename
+        req.files && req.files?.screenshot7
+          ? req.files?.screenshot7[0].filename
           : selectedProduct.screenshot7,
       screenshot8:
-        req.files && req.files.screenshot8
-          ? req.files.screenshot8[0].filename
+        req.files && req.files?.screenshot8
+          ? req.files?.screenshot8[0].filename
           : selectedProduct.screenshot8,
       mainZip:
-        req.files && req.files.mainZip
-          ? req.files.mainZip[0].filename
+        req.files && req.files?.mainZip
+          ? req.files?.mainZip[0].filename
           : selectedProduct.mainZip,
     };
 
@@ -265,55 +266,55 @@ const updateProduct = async (req, res, next) => {
 
       // delete previous files after updating them
 
-      if (req.files && req.files.icon) {
+      if (req.files && req.files?.icon) {
         fs.unlink(`uploads/product/${selectedProduct.icon}`, (err) => {
           if (err) return console.log(err);
           console.log('icon file deleted successfully');
         });
       }
-      if (req.files && req.files.preview) {
+      if (req.files && req.files?.preview) {
         fs.unlink(`uploads/product/${selectedProduct.preview}`, (err) => {
           if (err) return console.log(err);
           console.log('preview file deleted successfully');
         });
       }
-      if (req.files && req.files.mainZip) {
+      if (req.files && req.files?.mainZip) {
         fs.unlink(`uploads/product/${selectedProduct.mainZip}`, (err) => {
           if (err) return console.log(err);
           console.log('mainZip file deleted successfully');
         });
       }
-      if (req.files && req.files.screenshot1) {
+      if (req.files && req.files?.screenshot1) {
         fs.unlink(`uploads/product/${selectedProduct.screenshot1}`, (err) => {
           if (err) return console.log(err);
           console.log('screenshot1 file deleted successfully');
         });
       }
-      if (req.files && req.files.screenshot4) {
+      if (req.files && req.files?.screenshot4) {
         fs.unlink(`uploads/product/${selectedProduct.screenshot4}`, (err) => {
           if (err) return console.log(err);
           console.log('screenshot4 file deleted successfully');
         });
       }
-      if (req.files && req.files.screenshot5) {
+      if (req.files && req.files?.screenshot5) {
         fs.unlink(`uploads/product/${selectedProduct.screenshot5}`, (err) => {
           if (err) return console.log(err);
           console.log('screenshot5 file deleted successfully');
         });
       }
-      if (req.files && req.files.screenshot6) {
+      if (req.files && req.files?.screenshot6) {
         fs.unlink(`uploads/product/${selectedProduct.screenshot6}`, (err) => {
           if (err) return console.log(err);
           console.log('screenshot6 file deleted successfully');
         });
       }
-      if (req.files && req.files.screenshot7) {
+      if (req.files && req.files?.screenshot7) {
         fs.unlink(`uploads/product/${selectedProduct.screenshot7}`, (err) => {
           if (err) return console.log(err);
           console.log('screenshot7 file deleted successfully');
         });
       }
-      if (req.files && req.files.screenshot8) {
+      if (req.files && req.files?.screenshot8) {
         fs.unlink(`uploads/product/${selectedProduct.screenshot8}`, (err) => {
           if (err) return console.log(err);
           console.log('screenshot8 file deleted successfully');
