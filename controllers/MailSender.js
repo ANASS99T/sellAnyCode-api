@@ -1,17 +1,19 @@
 const nodemailer = require("nodemailer");
 
-async function mail(senderEmail, senderPassowrd, receiver, subject, text,html= "") {
+async function mail(receiver, subject, text,html= "") {
 
     let mailTransporter = nodemailer.createTransport({
         service: 'gmail',
+        // secure: false, 
+        // requireTLS: true,
         auth: {
-            user: senderEmail,
-            pass: senderPassowrd
+            user: 'pmp.trainingma@gmail.com',
+            pass: 'PMP-Training@123'
         }
     });
 
     let mailDetails = {
-        from: senderEmail,
+        from: 'pmp.trainingma@gmail.com',
         to: receiver,
         subject: subject, // Subject line
         text: text, // plain text body
