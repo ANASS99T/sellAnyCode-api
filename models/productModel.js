@@ -145,6 +145,16 @@ module.exports = (sequelize, DataTypes) => {
         key: 'id',
       },
     },
+    views: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    likes: {
+      type: DataTypes.DOUBLE,
+      allowNull: false,
+      defaultValue: 0,
+    },
   });
 
   // Product.associate = (models) => {

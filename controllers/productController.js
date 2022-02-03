@@ -348,6 +348,8 @@ const getProductById = async (req, res, next) => {
 
     product = product.dataValues;
 
+
+
     // update user id to user info
     let defaultUser = await User.findOne({ where: { id: product.user } });
 
@@ -377,7 +379,19 @@ const getProductById = async (req, res, next) => {
     defaultSubcategory = defaultSubcategory.dataValues;
     product.subcategory = defaultSubcategory;
 
-    return res.status(201).json({ success: true, product });
+    let data = {
+      views: views + 1,
+    };
+
+    try {
+      // Views Incrementation
+      await Product.update(data, { where: { id: id } });
+    } catch (error) {
+      console.log(error);
+      return res.status(403).json({ success: false, error });
+    }
+     
+   
   } catch (error) {
     console.log(error);
     return res.status(403).json({ success: false, error });
