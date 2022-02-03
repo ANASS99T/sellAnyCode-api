@@ -359,6 +359,7 @@ const getProductById = async (req, res, next) => {
       fullName: defaultUser.fullName,
       username: defaultUser.username,
       email: defaultUser.email,
+      devloperType : defaultUser.devloperType,
     };
 
     product.user = user;
