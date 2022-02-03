@@ -380,12 +380,14 @@ const getProductById = async (req, res, next) => {
     product.subcategory = defaultSubcategory;
 
     let data = {
-      views: views + 1,
+      views: product.views + 1,
     };
 
     try {
       // Views Incrementation
       await Product.update(data, { where: { id: id } });
+
+      return res.status(200).json({success: true, product: product});
     } catch (error) {
       console.log(error);
       return res.status(403).json({ success: false, error });

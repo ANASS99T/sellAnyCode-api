@@ -146,12 +146,22 @@ module.exports = (sequelize, DataTypes) => {
       },
     },
     views: {
-      type: DataTypes.DOUBLE,
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
     },
     likes: {
-      type: DataTypes.DOUBLE,
+      type: DataTypes.INTEGER,
+      allowNull: false,
+      defaultValue: 0,
+    },
+    status: {
+      type: DataTypes.STRING,
+      allowNull: false,
+      defaultValue: 'new',
+    },
+    sales: {
+      type: DataTypes.INTEGER,
       allowNull: false,
       defaultValue: 0,
     },
