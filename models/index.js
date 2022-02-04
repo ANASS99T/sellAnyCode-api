@@ -34,6 +34,9 @@ db.categories = require('./categoryModel.js')(sequelize, DataTypes);
 db.subcategories = require('./subcategoryModel.js')(sequelize, DataTypes);
 db.transations = require('./transactionModel.js')(sequelize, DataTypes);
 db.wishlists = require('./wishlistModel.js')(sequelize, DataTypes);
+db.comments = require('./commentModel')(sequelize, DataTypes);
+db.reviews = require('./reviewModel')(sequelize, DataTypes);
+
 
 
 db.sequelize.sync({force: false})

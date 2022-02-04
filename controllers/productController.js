@@ -348,8 +348,6 @@ const getProductById = async (req, res, next) => {
 
     product = product.dataValues;
 
-
-
     // update user id to user info
     let defaultUser = await User.findOne({ where: { id: product.user } });
 
@@ -820,6 +818,42 @@ const deleteWhislistProd = async (req, res, next) => {
 // *  ==================== END ====================
 
 
+//** Likes Fcts**//
+// TODO: Like a Product
+// *  ==================== START ====================
+
+const addLikesToProduct = async (req, res, next) => {
+  const data = {
+    user: req.body.userid,
+    product: req.body.prodid,
+  };
+  try {
+    let product = await Product.findOne({ where: { id: prodid } });
+
+    product = product.dataValues;
+
+    let data = {
+      likes: product.likes + 1,
+    };
+    
+    try {
+      // Likes Incrementation
+      await Product.update(data, { where: { id: prodid } });
+
+      return res.status(200).json({success: true, product: product});
+    } catch (error) {
+      console.log(error);
+      return res.status(403).json({ success: false, error });
+    }
+     
+  } catch (error) {
+    return res.status(403).json({ success: false, error: error });
+  }
+};
+
+// *  ==================== END ====================
+
+
 module.exports = {
   addProduct,
   updateProduct,
@@ -831,5 +865,7 @@ module.exports = {
   deleteProduct,
   getAllProducts,
   addProductToWhislist,
-  deleteWhislistProd
+  deleteWhislistProd,
+  addLikesToProduct,
+
 };
