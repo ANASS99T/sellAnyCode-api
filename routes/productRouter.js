@@ -93,6 +93,8 @@ router.get('/', productController.getAllProducts);
 
 router.post('/whishlist_prod',checkAuth,productController.addProductToWhislist);
 router.delete('/rmwhislistprod/:id',checkAuth, productController.deleteWhislistProd);
+
+//likes
 router.post('/likeprod',productController.addLikesToProduct);
 
 

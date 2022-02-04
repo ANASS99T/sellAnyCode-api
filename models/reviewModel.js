@@ -1,6 +1,8 @@
 const productModel = require('./productModel');
 const userModel = require('./userModel');
 
+
+
 module.exports = (sequelize, DataTypes) => {
   const Review = sequelize.define('review', {
     id: {
