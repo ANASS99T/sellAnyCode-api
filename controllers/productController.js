@@ -9,6 +9,8 @@ const User = db.users;
 const Category = db.categories;
 const Subctegory = db.subcategories;
 const Whishlist = db.wishlists;
+const Comment = db.comments;
+const Review = db.reviews;
 
 
 // TODO: Add product
@@ -807,7 +809,7 @@ const deleteWhislistProd = async (req, res, next) => {
     await Whishlist.destroy({ where: { id: id } });
     return res
       .status(201)
-      .json({ success: true, message: 'The product has removed successfully' });
+      .json({ success: true, message: 'The product has been removed successfully' });
   } catch (error) {
     console.log(error);
     return res
@@ -825,8 +827,8 @@ const deleteWhislistProd = async (req, res, next) => {
 
 const addLikesToProduct = async (req, res, next) => {
   const data = {
-    user: req.body.userid,
-    product: req.body.prodid,
+    user  : req.user,
+    product: req.body.prod,
   };
   try {
     let product = await Product.findOne({ where: { id: prodid } });
@@ -854,6 +856,180 @@ const addLikesToProduct = async (req, res, next) => {
 
 // *  ==================== END ====================
 
+// TODO: Add Comment 
+// *  ==================== START ====================
+
+const addComment = async (req, res, next) => {
+  const data = {
+    user: req.user ,
+    product: req.body.product,
+    content : req.body.content
+  };
+  try {
+    const comment = await Comment.create(data);
+    console.log(req.cookies.token)
+    return res.status(201).json({
+      success: true,
+      message: 'Comment added successfully',
+      comment,
+    });
+  } catch (error) {
+    return res.status(403).json({ success: false, error: error });
+  }
+};
+
+// *  ==================== END ====================
+
+// TODO: Delete the comment 
+
+// *  ==================== START ====================
+
+const deleteComment = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await Comment.destroy({ where: { id: id } });
+    return res
+      .status(201)
+      .json({ success: true, message: 'The comment has been removed successfully' });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(403)
+      .json({ success: false, error: 'An error occurred!' });
+  }
+};
+
+// *  ==================== END ====================
+
+// TODO: Get comments by product
+
+// *  ==================== START ====================
+
+const getCommentsByProduct = async (req, res, next) => {
+  const { product } = req.body;
+
+  try {
+    let comments = await Comment.findAll({
+      where: { product: product },
+    });
+    let list = [];
+    await Promise.all(
+      comments.map(async (comment) => {
+        // update user id to user info
+        let defaultUser = await User.findOne({ where: { id: comment.user } });
+
+        defaultUser = defaultUser.dataValues;
+
+        let user = {
+          fullName: defaultUser.fullName,
+          username: defaultUser.username,
+          email: defaultUser.email,
+        };
+ 
+        const obj = await {
+          ...comment.dataValues,
+          user: user,
+        };
+        await list.push(obj);
+      })
+    );
+
+    return res.status(201).json({ success: true, comments: list });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ success: false, error });
+  }
+};
+
+// *  ==================== END ====================
+
+
+// TODO: Add Review 
+// *  ==================== START ====================
+
+const addReview = async (req, res, next) => {
+  const data = {
+    user  : req.user,
+    product: req.body.prod,
+    review : req.body.review
+  };
+  try {
+    const review = await Review.create(data);
+    console.log(req.cookies.token)
+    return res.status(201).json({
+      success: true,
+      message: 'Review added successfully',
+      review,
+    });
+  } catch (error) {
+    return res.status(403).json({ success: false, error: error });
+  }
+};
+
+// *  ==================== END ====================
+
+// TODO: Delete the review
+
+// *  ==================== START ====================
+
+const deleteReview = async (req, res, next) => {
+  try {
+    const { id } = req.params;
+    await Review.destroy({ where: { id: id } });
+    return res
+      .status(201)
+      .json({ success: true, message: 'The review has been removed successfully' });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(403)
+      .json({ success: false, error: error });
+  }
+};
+
+// *  ==================== END ====================
+
+// TODO: Get reviews by product
+
+// *  ==================== START ====================
+
+const getReviewByProduct = async (req, res, next) => {
+  const { product } = req.body;
+
+  try {
+    let reviews = await Review.findAll({
+      where: { product: product },
+    });
+    let list = [];
+    await Promise.all(
+      reviews.map(async (review) => {
+        // update user id to user info
+        let defaultUser = await User.findOne({ where: { id: review.user } });
+
+        defaultUser = defaultUser.dataValues;
+
+        let user = {
+          fullName: defaultUser.fullName,
+          username: defaultUser.username,
+          email: defaultUser.email,
+        };
+ 
+        const obj = await {
+          ...review.dataValues,
+          user: user,
+        };
+        await list.push(obj);
+      })
+    );
+
+    return res.status(201).json({ success: true, review: list });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ success: false, error });
+  }
+};
+
+// *  ==================== END ====================
 
 module.exports = {
   addProduct,
@@ -868,5 +1044,12 @@ module.exports = {
   addProductToWhislist,
   deleteWhislistProd,
   addLikesToProduct,
+  addComment,
+  addReview,
+  getReviewByProduct,
+  getCommentsByProduct,
+  deleteReview,
+  deleteComment,
+
 
 };
