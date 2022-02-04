@@ -88,12 +88,13 @@ router.get('/category/:category', productController.getProductsByCategory);
 router.get('/subcategory/:subcategory', productController.getProductsBySubcategory);
 router.get('/name/:name', productController.getProductsByName);
 router.get('/user/:user', productController.getProductsByUser);
-router.delete('/:id', productController.deleteProduct);
+router.delete('/delete/:id', productController.deleteProduct);
 router.get('/', productController.getAllProducts);
 
 //whishlist
 router.post('/whishlist_prod',checkAuth,productController.addProductToWhislist);
-router.delete('/rmwhislistprod/:id',checkAuth, productController.deleteWhislistProd);
+router.post('/inwhishlist',checkAuth,productController.isProductInWishlist);
+router.delete('/rmwhislistprod',checkAuth, productController.deleteWhislistProd);
 
 //likes
 router.post('/likeprod',productController.addLikesToProduct);
