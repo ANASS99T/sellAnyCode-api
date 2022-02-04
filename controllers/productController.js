@@ -10,13 +10,11 @@ const Category = db.categories;
 const Subctegory = db.subcategories;
 const Whishlist = db.wishlists;
 
-
 // TODO: Add product
 
 // *  ==================== START ====================
 
 const addProduct = async (req, res, next) => {
-
   // return console.log(req.files)
   let data = {
     name: req.body.name,
@@ -357,7 +355,7 @@ const getProductById = async (req, res, next) => {
       fullName: defaultUser.fullName,
       username: defaultUser.username,
       email: defaultUser.email,
-      devloperType : defaultUser.devloperType,
+      devloperType: defaultUser.devloperType,
     };
 
     product.user = user;
@@ -386,13 +384,11 @@ const getProductById = async (req, res, next) => {
       // Views Incrementation
       await Product.update(data, { where: { id: id } });
 
-      return res.status(200).json({success: true, product: product});
+      return res.status(200).json({ success: true, product: product });
     } catch (error) {
       console.log(error);
       return res.status(403).json({ success: false, error });
     }
-     
-   
   } catch (error) {
     console.log(error);
     return res.status(403).json({ success: false, error });
@@ -697,11 +693,10 @@ const deleteProduct = async (req, res, next) => {
   try {
     const { id } = req.params;
 
-    let product = await Product.findOne({where: {id: id}})
-    product = product.dataValues
+    let product = await Product.findOne({ where: { id: id } });
+    product = product.dataValues;
 
     await Product.destroy({ where: { id: id } });
-
 
     // delete previous files after updating them
 
@@ -772,19 +767,18 @@ const deleteProduct = async (req, res, next) => {
 
 // *  ==================== END ====================
 
-
 //** Whislist Fcts**//
 // TODO: Add Product To Whislist
 // *  ==================== START ====================
 
 const addProductToWhislist = async (req, res, next) => {
   const data = {
-    user: req.body.userid,
-    product: req.body.prodid,
+    user: req.body.user,
+    product: req.body.product,
   };
   try {
     const wishlistprod = await Whishlist.create(data);
-    console.log(req.cookies.token)
+    console.log(req.cookies.token);
     return res.status(201).json({
       success: true,
       message: 'Product added successfully to the whishlist',
@@ -797,27 +791,69 @@ const addProductToWhislist = async (req, res, next) => {
 
 // *  ==================== END ====================
 
-// TODO: Delete the product from whishlist 
+// TODO: Delete the product from whishlist
 
 // *  ==================== START ====================
 
 const deleteWhislistProd = async (req, res, next) => {
   try {
-    const { id } = req.params;
-    await Whishlist.destroy({ where: { id: id } });
-    return res
-      .status(201)
-      .json({ success: true, message: 'The product has removed successfully' });
+    const data = {
+      user: req.body.user,
+      product: req.body.product,
+    };
+    // return console.log(data)
+    try {
+      const wishlist = await Whishlist.findAll({
+        where: { product: data?.product, user: data?.user },
+      });
+      // return console.log('I m heeeeer',wishlist);
+      await Whishlist.destroy({ where: { id: wishlist[0]?.id } });
+      return res.status(201).json({
+        success: true,
+        message: 'The product has removed from wishlist successfully',
+      });
+    } catch (err) {
+      return res.status(403).json({ success: false, err });
+    }
   } catch (error) {
     console.log(error);
     return res
       .status(403)
-      .json({ success: false, error: 'An error occurred!' });
+      .json({ success: false, error: 'the error is here' + error });
   }
 };
 
 // *  ==================== END ====================
 
+// TODO: Add Product To Whislist
+// *  ==================== START ====================
+
+const isProductInWishlist = async (req, res, next) => {
+  const data = {
+    user: req.body.user,
+    product: req.body.product,
+  };
+
+  try {
+    const wishlistprod = await Whishlist.findAll({
+      where: { product: data?.product, user: data?.user },
+    });
+
+    if (wishlistprod.length > 0) {
+      return res.status(201).json({
+        success: true,
+        inWishlist: true,
+      });
+    } else {
+      return res.status(201).json({
+        success: true,
+        inWishlist: false,
+      });
+    }
+  } catch (error) {
+    return res.status(403).json({ success: false, error: error });
+  }
+};
 
 //** Likes Fcts**//
 // TODO: Like a Product
@@ -836,24 +872,22 @@ const addLikesToProduct = async (req, res, next) => {
     let data = {
       likes: product.likes + 1,
     };
-    
+
     try {
       // Likes Incrementation
       await Product.update(data, { where: { id: prodid } });
 
-      return res.status(200).json({success: true, product: product});
+      return res.status(200).json({ success: true, product: product });
     } catch (error) {
       console.log(error);
       return res.status(403).json({ success: false, error });
     }
-     
   } catch (error) {
     return res.status(403).json({ success: false, error: error });
   }
 };
 
 // *  ==================== END ====================
-
 
 module.exports = {
   addProduct,
@@ -868,5 +902,5 @@ module.exports = {
   addProductToWhislist,
   deleteWhislistProd,
   addLikesToProduct,
-
+  isProductInWishlist,
 };
