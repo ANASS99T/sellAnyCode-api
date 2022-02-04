@@ -91,6 +91,7 @@ router.get('/user/:user', productController.getProductsByUser);
 router.delete('/delete/:id', productController.deleteProduct);
 router.get('/', productController.getAllProducts);
 
+//whishlist
 router.post('/whishlist_prod',checkAuth,productController.addProductToWhislist);
 router.post('/inwhishlist',checkAuth,productController.isProductInWishlist);
 router.delete('/rmwhislistprod',checkAuth, productController.deleteWhislistProd);
@@ -98,6 +99,12 @@ router.delete('/rmwhislistprod',checkAuth, productController.deleteWhislistProd)
 //likes
 router.post('/likeprod',productController.addLikesToProduct);
 
-
+//Reviws & Commments
+router.post('/comment',checkAuth, productController.addComment);
+router.post('/allcomments', productController.getCommentsByProduct);
+router.delete('/comment/:id',checkAuth, productController.deleteComment);
+router.post('/review',checkAuth, productController.addReview);
+router.post('/allreviews', productController.getReviewByProduct);
+router.delete('/review/:id',checkAuth,productController.deleteReview);
 
 module.exports = router;
