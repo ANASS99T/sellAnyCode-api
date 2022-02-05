@@ -861,8 +861,9 @@ const isProductInWishlist = async (req, res, next) => {
 // *  ==================== START ====================
 
 const addLikesToProduct = async (req, res, next) => {
+  const id = req.body?.product
   try {
-    let product = await Product.findOne({ where: { id: prodid } });
+    let product = await Product.findOne({ where: { id: id } });
 
     product = product.dataValues;
 
@@ -872,9 +873,9 @@ const addLikesToProduct = async (req, res, next) => {
 
     try {
       // Likes Incrementation
-      await Product.update(data, { where: { id: prodid } });
+      await Product.update(data, { where: { id: id } });
 
-      return res.status(200).json({ success: true, product: product });
+      return res.status(200).json({ success: true, message:'like addedd successfully' });
     } catch (error) {
       console.log(error);
       return res.status(403).json({ success: false, error });
@@ -980,8 +981,8 @@ const getCommentsByProduct = async (req, res, next) => {
 const addReview = async (req, res, next) => {
   const data = {
     user  : req.user,
-    product: req.body.prod,
-    review : req.body.review
+    product: req.body.product,
+    content : req.body.content
   };
   try {
     const review = await Review.create(data);

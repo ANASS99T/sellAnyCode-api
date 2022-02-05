@@ -36,6 +36,7 @@ db.transations = require('./transactionModel.js')(sequelize, DataTypes);
 db.wishlists = require('./wishlistModel.js')(sequelize, DataTypes);
 db.comments = require('./commentModel')(sequelize, DataTypes);
 db.reviews = require('./reviewModel')(sequelize, DataTypes);
+db.sales = require('./salesModel')(sequelize, DataTypes);
 
 
 
