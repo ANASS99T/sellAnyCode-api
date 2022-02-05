@@ -504,7 +504,7 @@ const updateUser = async (req, res, next) => {
 
   try {
     const user = await User.update(
-      { ...req.body, fullName: "Anass" },
+      { ...req.body },
       { where: { id: id } }
     );
 
@@ -610,7 +610,7 @@ const deleteAccount = async (req, res) => {
 // *  ==================== Start ====================
 
 const generateToken = async (req, res, next) => {
-  console.log(req.cookies);
+  // console.log('this is it : ',req.cookies);
   const token = req.cookies?.refresh_token;
 
   if (token) {
@@ -626,14 +626,14 @@ const generateToken = async (req, res, next) => {
           decoded?.data?.role
         );
         res.cookie("access_token", AccessToken, { httpOnly: true });
-        return res.status(201).json({ success: true });
+        return res.status(201).json({ success: true, user : decoded?.data?.id });
       }
     });
   } else {
-    console.log(token);
+    // console.log('the error : ' , token);
     return res
-      .status(401)
-      .json({ message: "your token is not valid, please re login" });
+      .status(201)
+      .json({ success: false,error: "your token is not valid, please re login" });
   }
 };
 

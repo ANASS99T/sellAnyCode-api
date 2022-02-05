@@ -83,7 +83,7 @@ router.put(
   ]),
   productController.updateProduct
 );
-router.get('/:id', checkAuth, productController.getProductById);
+router.get('/:id', productController.getProductById);
 router.get('/category/:category', productController.getProductsByCategory);
 router.get('/subcategory/:subcategory', productController.getProductsBySubcategory);
 router.get('/name/:name', productController.getProductsByName);

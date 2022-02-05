@@ -949,12 +949,12 @@ const getCommentsByProduct = async (req, res, next) => {
         // update user id to user info
         let defaultUser = await User.findOne({ where: { id: comment.user } });
 
-        defaultUser = defaultUser.dataValues;
-
+        // console.log(defaultUser.dataValues)
+        // defaultUser = defaultUser.dataValues;
         let user = {
-          fullName: defaultUser.fullName,
-          username: defaultUser.username,
-          email: defaultUser.email,
+          fullName: defaultUser?.dataValues.fullName,
+          username: defaultUser?.dataValues.username,
+          email: defaultUser?.dataValues.email,
         };
  
         const obj = await {
