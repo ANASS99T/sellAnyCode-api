@@ -4,6 +4,8 @@ const userRouter = require('./routes/userRouter');
 const productRouter = require('./routes/productRouter');
 const categoryRouter = require('./routes/categoryRouter');
 const subcategoryRouter = require('./routes/subcategoryRouter');
+const salesRouter = require('./routes/salesRouter');
+
 const cookieParser = require('cookie-parser');
 require('dotenv/config');
 const jwt = require('express-jwt');
@@ -39,6 +41,7 @@ app.use('/api/user', userRouter);
 app.use('/api/category', categoryRouter);
 app.use('/api/subcategory', subcategoryRouter);
 app.use('/api/product', productRouter);
+app.use('/api/sales', salesRouter);
 
 // Undefined routes
 
