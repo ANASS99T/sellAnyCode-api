@@ -107,4 +107,15 @@ router.post('/review',checkAuth, productController.addReview);
 router.post('/allreviews', productController.getReviewByProduct);
 router.delete('/review/:id',checkAuth,productController.deleteReview);
 
+
+//product filters
+router.get('/simillaritems/:category',productController.getSimilarItems);
+router.post('/newaddedproduct',productController.getNewAddedProduct);
+router.post('/hotproduct',productController.getHotProduct);
+router.post('/popularproduct',productController.getPopularProduct);
+router.post('/topsellingproduct',productController.getTopSellingProduct);
+
+
+
+
 module.exports = router;
