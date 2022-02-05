@@ -404,7 +404,6 @@ const getProductById = async (req, res, next) => {
 // *  ==================== START ====================
 
 const getAllProducts = async (req, res, next) => {
-  const { category } = req.params;
 
   try {
     let products = await Product.findAll();
@@ -862,10 +861,6 @@ const isProductInWishlist = async (req, res, next) => {
 // *  ==================== START ====================
 
 const addLikesToProduct = async (req, res, next) => {
-  const data = {
-    user  : req.user,
-    product: req.body.prod,
-  };
   try {
     let product = await Product.findOne({ where: { id: prodid } });
 
@@ -1066,6 +1061,279 @@ const getReviewByProduct = async (req, res, next) => {
 
 // *  ==================== END ====================
 
+// TODO: Get Similar Items
+
+// *  ==================== START ====================
+
+const getSimilarItems = async (req, res, next) => {
+  const { category } = req.params;
+
+  try {
+    let products = await Product.findAll({ where: { category: category },limit: 8 });
+    let list = [];
+    await Promise.all(
+      products.map(async (product) => {
+        // update user id to user info
+        let defaultUser = await User.findOne({ where: { id: product.user } });
+
+        defaultUser = defaultUser.dataValues;
+
+        let user = {
+          fullName: defaultUser.fullName,
+          username: defaultUser.username,
+          email: defaultUser.email,
+        };
+
+        // update category id to category info
+        let category = await Category.findOne({
+          whre: { id: product.category },
+        });
+
+        category = category.dataValues;
+
+        // update subcategory id to subcategory info
+        let subcategory = await Subctegory.findOne({
+          whre: { id: product.subcategory },
+        });
+
+        subcategory = subcategory.dataValues;
+
+        const obj = await {
+          ...product.dataValues,
+          user: user,
+          category: category,
+          subcategory: subcategory,
+        };
+        await list.push(obj);
+      })
+    );
+
+    return res.status(201).json({ success: true, products: list });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ success: false, error });
+  }
+};
+
+// *  ==================== END ====================
+
+// TODO: Get New Added Product
+
+// *  ==================== START ====================
+
+const getNewAddedProduct = async (req, res, next) => {
+  try {
+    let products = await Product.findAll({ order: [['updatedAt', 'DESC']],limit: 10});
+    let list = [];
+    await Promise.all(
+      products.map(async (product) => {
+        // update user id to user info
+        let defaultUser = await User.findOne({ where: { id: product.user } });
+
+        defaultUser = defaultUser.dataValues;
+
+        let user = {
+          fullName: defaultUser.fullName,
+          username: defaultUser.username,
+          email: defaultUser.email,
+        };
+
+        // update category id to category info
+        let category = await Category.findOne({
+          whre: { id: product.category },
+        });
+
+        category = category.dataValues;
+
+        // update subcategory id to subcategory info
+        let subcategory = await Subctegory.findOne({
+          whre: { id: product.subcategory },
+        });
+
+        subcategory = subcategory.dataValues;
+
+        const obj = await {
+          ...product.dataValues,
+          user: user,
+          category: category,
+          subcategory: subcategory,
+        };
+        await list.push(obj);
+      })
+    );
+
+    return res.status(201).json({ success: true, products: list });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ success: false, error });
+  }
+};
+
+// *  ==================== END ====================
+
+// TODO: Get Hot Product
+
+// *  ==================== START ====================
+
+const getHotProduct = async (req, res, next) => {
+  try {
+    let products = await Product.findAll({ order: [['likes', 'DESC']],limit: 10});
+    let list = [];
+    await Promise.all(
+      products.map(async (product) => {
+        // update user id to user info
+        let defaultUser = await User.findOne({ where: { id: product.user } });
+
+        defaultUser = defaultUser.dataValues;
+
+        let user = {
+          fullName: defaultUser.fullName,
+          username: defaultUser.username,
+          email: defaultUser.email,
+        };
+
+        // update category id to category info
+        let category = await Category.findOne({
+          whre: { id: product.category },
+        });
+
+        category = category.dataValues;
+
+        // update subcategory id to subcategory info
+        let subcategory = await Subctegory.findOne({
+          whre: { id: product.subcategory },
+        });
+
+        subcategory = subcategory.dataValues;
+
+        const obj = await {
+          ...product.dataValues,
+          user: user,
+          category: category,
+          subcategory: subcategory,
+        };
+        await list.push(obj);
+      })
+    );
+
+    return res.status(201).json({ success: true, products: list });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ success: false, error });
+  }
+};
+
+// *  ==================== END ====================
+
+// TODO: Get Popular Product
+
+// *  ==================== START ====================
+
+const getPopularProduct = async (req, res, next) => {
+  try {
+    let products = await Product.findAll({ order: [['views', 'DESC']],limit: 10});
+    let list = [];
+    await Promise.all(
+      products.map(async (product) => {
+        // update user id to user info
+        let defaultUser = await User.findOne({ where: { id: product.user } });
+
+        defaultUser = defaultUser.dataValues;
+
+        let user = {
+          fullName: defaultUser.fullName,
+          username: defaultUser.username,
+          email: defaultUser.email,
+        };
+
+        // update category id to category info
+        let category = await Category.findOne({
+          whre: { id: product.category },
+        });
+
+        category = category.dataValues;
+
+        // update subcategory id to subcategory info
+        let subcategory = await Subctegory.findOne({
+          whre: { id: product.subcategory },
+        });
+
+        subcategory = subcategory.dataValues;
+
+        const obj = await {
+          ...product.dataValues,
+          user: user,
+          category: category,
+          subcategory: subcategory,
+        };
+        await list.push(obj);
+      })
+    );
+
+    return res.status(201).json({ success: true, products: list });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ success: false, error });
+  }
+};
+
+// *  ==================== END ====================
+
+// TODO: Get Popular Product
+
+// *  ==================== START ====================
+
+const getTopSellingProduct = async (req, res, next) => {
+  try {
+    let products = await Product.findAll({ order: [['sales', 'DESC']],limit: 10});
+    let list = [];
+    await Promise.all(
+      products.map(async (product) => {
+        // update user id to user info
+        let defaultUser = await User.findOne({ where: { id: product.user } });
+
+        defaultUser = defaultUser.dataValues;
+
+        let user = {
+          fullName: defaultUser.fullName,
+          username: defaultUser.username,
+          email: defaultUser.email,
+        };
+
+        // update category id to category info
+        let category = await Category.findOne({
+          whre: { id: product.category },
+        });
+
+        category = category.dataValues;
+
+        // update subcategory id to subcategory info
+        let subcategory = await Subctegory.findOne({
+          whre: { id: product.subcategory },
+        });
+
+        subcategory = subcategory.dataValues;
+
+        const obj = await {
+          ...product.dataValues,
+          user: user,
+          category: category,
+          subcategory: subcategory,
+        };
+        await list.push(obj);
+      })
+    );
+
+    return res.status(201).json({ success: true, products: list });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ success: false, error });
+  }
+};
+
+// *  ==================== END ====================
+
+
 module.exports = {
   addProduct,
   updateProduct,
@@ -1085,7 +1353,11 @@ module.exports = {
   getCommentsByProduct,
   deleteReview,
   deleteComment,
-
-
+  getSimilarItems,
+  getNewAddedProduct,
+  getHotProduct,
+  getPopularProduct,
+  getTopSellingProduct,
+  
   isProductInWishlist,
 };
