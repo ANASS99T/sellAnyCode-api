@@ -347,7 +347,7 @@ const getProductById = async (req, res, next) => {
     let product = await Product.findOne({ where: { id: id } });
 
     product = product.dataValues;
-    
+
     // update user id to user info
     let defaultUser = await User.findOne({ where: { id: product.user } });
 
@@ -404,8 +404,8 @@ const getProductById = async (req, res, next) => {
 // *  ==================== START ====================
 
 const getAllProducts = async (req, res, next) => {
-  console.log("Get all rpoducrts")
-  try { 
+  console.log('Get all rpoducrts');
+  try {
     let products = await Product.findAll();
     let list = [];
     await Promise.all(
@@ -465,6 +465,69 @@ const getProductsByCategory = async (req, res, next) => {
 
   try {
     let products = await Product.findAll({ where: { category: category } });
+    let list = [];
+    await Promise.all(
+      products.map(async (product) => {
+        // update user id to user info
+        let defaultUser = await User.findOne({ where: { id: product.user } });
+
+        defaultUser = defaultUser.dataValues;
+
+        let user = {
+          fullName: defaultUser.fullName,
+          username: defaultUser.username,
+          email: defaultUser.email,
+        };
+
+        // update category id to category info
+        let category = await Category.findOne({
+          whre: { id: product.category },
+        });
+
+        category = category.dataValues;
+
+        // update subcategory id to subcategory info
+        let subcategory = await Subctegory.findOne({
+          whre: { id: product.subcategory },
+        });
+
+        subcategory = subcategory.dataValues;
+
+        const obj = await {
+          ...product.dataValues,
+          user: user,
+          category: category,
+          subcategory: subcategory,
+        };
+        await list.push(obj);
+      })
+    );
+
+    return res.status(201).json({ success: true, products: list });
+  } catch (error) {
+    console.log(error);
+    return res.status(403).json({ success: false, error });
+  }
+};
+
+// *  ==================== END ====================
+// TODO: Get products by category Name
+
+// *  ==================== START ====================
+
+const getProductsByCategoryName = async (req, res, next) => {
+  const { category } = req.params;
+  console.log('=====================================');
+  try {
+    let selectedCategory = await Category.findAll({
+      where: { name: { [Op.like]: `%${category}%` } },
+    });
+    console.log(category)
+
+    let products = await Product.findAll({
+      where: { category: selectedCategory[0]?.id },
+    });
+
     let list = [];
     await Promise.all(
       products.map(async (product) => {
@@ -856,12 +919,35 @@ const isProductInWishlist = async (req, res, next) => {
   }
 };
 
+// TODO: Add Product To Whislist
+// *  ==================== START ====================
+
+const wishlistSize = async (req, res, next) => {
+  const user = req?.user
+ 
+
+  try {
+    const wishlistprod = await Whishlist.findAll({
+      where: { user: user},
+    });
+
+    return res.status(201).json({
+      success: true,
+      wishlilstSize: wishlistprod.length,
+    });
+    
+    
+  } catch (error) {
+    return res.status(403).json({ success: false, error: error });
+  }
+};
+
 //** Likes Fcts**//
 // TODO: Like a Product
 // *  ==================== START ====================
 
 const addLikesToProduct = async (req, res, next) => {
-  const id = req.body?.product
+  const id = req.body?.product;
   try {
     let product = await Product.findOne({ where: { id: id } });
 
@@ -875,7 +961,9 @@ const addLikesToProduct = async (req, res, next) => {
       // Likes Incrementation
       await Product.update(data, { where: { id: id } });
 
-      return res.status(200).json({ success: true, message:'like addedd successfully' });
+      return res
+        .status(200)
+        .json({ success: true, message: 'like addedd successfully' });
     } catch (error) {
       console.log(error);
       return res.status(403).json({ success: false, error });
@@ -887,18 +975,18 @@ const addLikesToProduct = async (req, res, next) => {
 
 // *  ==================== END ====================
 
-// TODO: Add Comment 
+// TODO: Add Comment
 // *  ==================== START ====================
 
 const addComment = async (req, res, next) => {
   const data = {
-    user: req.user ,
+    user: req.user,
     product: req.body.product,
-    content : req.body.content
+    content: req.body.content,
   };
   try {
     const comment = await Comment.create(data);
-    console.log(req.cookies.token)
+    console.log(req.cookies.token);
     return res.status(201).json({
       success: true,
       message: 'Comment added successfully',
@@ -911,7 +999,7 @@ const addComment = async (req, res, next) => {
 
 // *  ==================== END ====================
 
-// TODO: Delete the comment 
+// TODO: Delete the comment
 
 // *  ==================== START ====================
 
@@ -919,9 +1007,10 @@ const deleteComment = async (req, res, next) => {
   try {
     const { id } = req.params;
     await Comment.destroy({ where: { id: id } });
-    return res
-      .status(201)
-      .json({ success: true, message: 'The comment has been removed successfully' });
+    return res.status(201).json({
+      success: true,
+      message: 'The comment has been removed successfully',
+    });
   } catch (error) {
     console.log(error);
     return res
@@ -956,7 +1045,7 @@ const getCommentsByProduct = async (req, res, next) => {
           username: defaultUser?.dataValues.username,
           email: defaultUser?.dataValues.email,
         };
- 
+
         const obj = await {
           ...comment.dataValues,
           user: user,
@@ -974,19 +1063,18 @@ const getCommentsByProduct = async (req, res, next) => {
 
 // *  ==================== END ====================
 
-
-// TODO: Add Review 
+// TODO: Add Review
 // *  ==================== START ====================
 
 const addReview = async (req, res, next) => {
   const data = {
-    user  : req.user,
+    user: req.user,
     product: req.body.product,
-    content : req.body.content
+    content: req.body.content,
   };
   try {
     const review = await Review.create(data);
-    console.log(req.cookies.token)
+    console.log(req.cookies.token);
     return res.status(201).json({
       success: true,
       message: 'Review added successfully',
@@ -1007,14 +1095,13 @@ const deleteReview = async (req, res, next) => {
   try {
     const { id } = req.params;
     await Review.destroy({ where: { id: id } });
-    return res
-      .status(201)
-      .json({ success: true, message: 'The review has been removed successfully' });
+    return res.status(201).json({
+      success: true,
+      message: 'The review has been removed successfully',
+    });
   } catch (error) {
     console.log(error);
-    return res
-      .status(403)
-      .json({ success: false, error: error });
+    return res.status(403).json({ success: false, error: error });
   }
 };
 
@@ -1044,7 +1131,7 @@ const getReviewByProduct = async (req, res, next) => {
           username: defaultUser.username,
           email: defaultUser.email,
         };
- 
+
         const obj = await {
           ...review.dataValues,
           user: user,
@@ -1070,7 +1157,10 @@ const getSimilarItems = async (req, res, next) => {
   const { category } = req.params;
 
   try {
-    let products = await Product.findAll({ where: { category: category },limit: 8 });
+    let products = await Product.findAll({
+      where: { category: category },
+      limit: 8,
+    });
     let list = [];
     await Promise.all(
       products.map(async (product) => {
@@ -1124,7 +1214,10 @@ const getSimilarItems = async (req, res, next) => {
 
 const getNewAddedProduct = async (req, res, next) => {
   try {
-    let products = await Product.findAll({ order: [['updatedAt', 'DESC']],limit: 10});
+    let products = await Product.findAll({
+      order: [['updatedAt', 'DESC']],
+      limit: 10,
+    });
     let list = [];
     await Promise.all(
       products.map(async (product) => {
@@ -1178,7 +1271,10 @@ const getNewAddedProduct = async (req, res, next) => {
 
 const getHotProduct = async (req, res, next) => {
   try {
-    let products = await Product.findAll({ order: [['likes', 'DESC']],limit: 10});
+    let products = await Product.findAll({
+      order: [['likes', 'DESC']],
+      limit: 10,
+    });
     let list = [];
     await Promise.all(
       products.map(async (product) => {
@@ -1232,7 +1328,10 @@ const getHotProduct = async (req, res, next) => {
 
 const getPopularProduct = async (req, res, next) => {
   try {
-    let products = await Product.findAll({ order: [['views', 'DESC']],limit: 10});
+    let products = await Product.findAll({
+      order: [['views', 'DESC']],
+      limit: 10,
+    });
     let list = [];
     await Promise.all(
       products.map(async (product) => {
@@ -1286,7 +1385,10 @@ const getPopularProduct = async (req, res, next) => {
 
 const getTopSellingProduct = async (req, res, next) => {
   try {
-    let products = await Product.findAll({ order: [['sales', 'DESC']],limit: 10});
+    let products = await Product.findAll({
+      order: [['sales', 'DESC']],
+      limit: 10,
+    });
     let list = [];
     await Promise.all(
       products.map(async (product) => {
@@ -1334,7 +1436,6 @@ const getTopSellingProduct = async (req, res, next) => {
 
 // *  ==================== END ====================
 
-
 module.exports = {
   addProduct,
   updateProduct,
@@ -1359,6 +1460,7 @@ module.exports = {
   getHotProduct,
   getPopularProduct,
   getTopSellingProduct,
-  
   isProductInWishlist,
+  getProductsByCategoryName,
+  wishlistSize
 };
