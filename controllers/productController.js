@@ -856,6 +856,29 @@ const isProductInWishlist = async (req, res, next) => {
   }
 };
 
+// TODO: REMOVE product FROM whishlist list
+
+// *  ==================== START ====================
+
+const deleteProductFromWhislitList = async (req, res, next) => {
+  try {
+    // console.log(req.params)
+    const { id } = req.params;
+
+    await Whishlist.destroy({ where: { id: id } });
+    return res
+      .status(201)
+      .json({ success: true, message: 'Product removed successfully' });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(403)
+      .json({ success: false, error: error });
+  }
+};
+
+// *  ==================== END ====================
+
 //** Likes Fcts**//
 // TODO: Like a Product
 // *  ==================== START ====================
@@ -905,6 +928,7 @@ const addComment = async (req, res, next) => {
       comment,
     });
   } catch (error) {
+    console.log('Hanaa '+error);
     return res.status(403).json({ success: false, error: error });
   }
 };
@@ -1347,6 +1371,7 @@ module.exports = {
   getAllProducts,
   addProductToWhislist,
   deleteWhislistProd,
+  deleteProductFromWhislitList,
   addLikesToProduct,
   addComment,
   addReview,

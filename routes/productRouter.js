@@ -95,7 +95,7 @@ router.get('/', productController.getAllProducts);
 router.post('/whishlist_prod',checkAuth,productController.addProductToWhislist);
 router.post('/inwhishlist',checkAuth,productController.isProductInWishlist);
 router.delete('/rmwhislistprod',checkAuth, productController.deleteWhislistProd);
-
+router.delete('/removefromwhishlist/:id',checkAuth, productController.deleteProductFromWhislitList);
 //likes
 router.post('/likeprod',productController.addLikesToProduct);
 
