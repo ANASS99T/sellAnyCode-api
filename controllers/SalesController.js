@@ -76,7 +76,36 @@ const SoldProduct = async (req, res, next) => {
 
 // *  ==================== END ====================
 
+// TODO: get number of salles
+
+// *  ==================== START ====================
+
+const SalesSize = async (req, res, next) => {
+  const user = req?.user;
+  // console.log(user);
+
+  try {
+    // const productsId = [];
+    // const products = [];
+    const sales = await Sales.findAll({
+      where: { user: user },
+    });
+
+
+    // console.log(products)
+    return res.status(201).json({ success: true, salesSize: sales.length });
+  } catch (error) {
+    console.log(error);
+    return res
+      .status(403)
+      .json({ success: false, error: 'An error occurred!' });
+  }
+};
+
+// *  ==================== END ====================
+
 module.exports = {
   checkSales,
   SoldProduct,
+  SalesSize
 };

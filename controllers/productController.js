@@ -919,6 +919,29 @@ const isProductInWishlist = async (req, res, next) => {
   }
 };
 
+// TODO: Add Product To Whislist
+// *  ==================== START ====================
+
+const wishlistSize = async (req, res, next) => {
+  const user = req?.user
+ 
+
+  try {
+    const wishlistprod = await Whishlist.findAll({
+      where: { user: user},
+    });
+
+    return res.status(201).json({
+      success: true,
+      wishlilstSize: wishlistprod.length,
+    });
+    
+    
+  } catch (error) {
+    return res.status(403).json({ success: false, error: error });
+  }
+};
+
 //** Likes Fcts**//
 // TODO: Like a Product
 // *  ==================== START ====================
@@ -1439,4 +1462,5 @@ module.exports = {
   getTopSellingProduct,
   isProductInWishlist,
   getProductsByCategoryName,
+  wishlistSize
 };
