@@ -347,7 +347,7 @@ const getProductById = async (req, res, next) => {
     let product = await Product.findOne({ where: { id: id } });
 
     product = product.dataValues;
-
+    
     // update user id to user info
     let defaultUser = await User.findOne({ where: { id: product.user } });
 
@@ -404,8 +404,8 @@ const getProductById = async (req, res, next) => {
 // *  ==================== START ====================
 
 const getAllProducts = async (req, res, next) => {
-
-  try {
+  console.log("Get all rpoducrts")
+  try { 
     let products = await Product.findAll();
     let list = [];
     await Promise.all(
