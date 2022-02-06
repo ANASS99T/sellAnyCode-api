@@ -115,6 +115,7 @@ router.post('/hotproduct',productController.getHotProduct);
 router.post('/popularproduct',productController.getPopularProduct);
 router.post('/topsellingproduct',productController.getTopSellingProduct);
 
+router.post('/categoryName/:category',productController.getProductsByCategoryName);
 
 
 
