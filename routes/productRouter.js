@@ -90,6 +90,8 @@ router.get('/name/:name', productController.getProductsByName);
 router.get('/user/:user', productController.getProductsByUser);
 router.delete('/delete/:id', productController.deleteProduct);
 router.get('/', productController.getAllProducts);
+router.post('/productnumber', productController.ProductNumber);
+
 
 //whishlist
 router.post('/whishlist_prod',checkAuth,productController.addProductToWhislist);

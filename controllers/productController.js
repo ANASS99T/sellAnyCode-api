@@ -76,7 +76,7 @@ const addProduct = async (req, res, next) => {
   // Create the product
 
   try {
-    console.log(data);
+    // console.log(data);
     const product = await Product.create(data);
     return res.status(201).json({
       success: true,
@@ -364,9 +364,9 @@ const getProductById = async (req, res, next) => {
 
 
     product.user = user;
-    console.log(product.user)
+    // console.log(product.user)
     // update category id to category info
-    console.log(product.category);
+    // console.log(product.category);
     let defaultCategory = await Category.findOne({
       where: { id: product.category }, raw:true
     });
@@ -408,7 +408,7 @@ const getProductById = async (req, res, next) => {
 // *  ==================== START ====================
 
 const getAllProducts = async (req, res, next) => {
-  console.log("Get all rpoducrts")
+ 
   try { 
     let products = await Product.findAll({ order: [['updatedAt', 'DESC']]});
     
@@ -446,7 +446,7 @@ const getAllProducts = async (req, res, next) => {
           ...product.dataValues,
         };
         await list.push(obj);
-        console.log(list);
+        // console.log(list);
       })
     );
 
@@ -527,7 +527,7 @@ const getProductsByCategoryName = async (req, res, next) => {
     let selectedCategory = await Category.findAll({
       where: { name: { [Op.like]: `%${category}%` } },
     });
-    console.log(category)
+    // console.log(category)
 
     let products = await Product.findAll({
       where: { category: selectedCategory[0]?.id },
@@ -947,7 +947,7 @@ const deleteProductFromWhislitList = async (req, res, next) => {
 
 // *  ==================== END ====================
 
-// TODO: Add Product To Whislist
+// TODO:  Whislist Size
 // *  ==================== START ====================
 
 const wishlistSize = async (req, res, next) => {
@@ -969,6 +969,28 @@ const wishlistSize = async (req, res, next) => {
     return res.status(403).json({ success: false, error: error });
   }
 };
+// *  ==================== END ====================
+
+// TODO:  Products Number
+// *  ==================== START ====================
+
+const ProductNumber = async (req, res, next) => {
+  
+  try {
+    const products = await Product.findAll({});
+// console.log(products.length);
+    return res.status(201).json({
+      success: true,
+      productNumber: products.length,
+    });
+     
+    
+  } catch (error) {
+    return res.status(403).json({ success: false, error: error });
+  }
+};
+// *  ==================== END ====================
+
 
 //** Likes Fcts**//
 // TODO: Like a Product
@@ -1021,7 +1043,7 @@ const addComment = async (req, res, next) => {
       comment,
     });
   } catch (error) {
-    console.log('Hanaa '+error);
+    console.log(error);
     return res.status(403).json({ success: false, error: error });
   }
 };
@@ -1185,8 +1207,6 @@ const getReviewByProduct = async (req, res, next) => {
 const getSimilarItems = async (req, res, next) => {
   
   const {product,category}= req.body;
-  // console.log('wa zmer')
-  // console.log(req.body)
 
   try {
     let products = await Product.findAll({ where: { category: category, id : {[Op.not]:product} },limit: 8 });
@@ -1240,7 +1260,6 @@ const getSimilarItems = async (req, res, next) => {
 const getNewAddedProduct = async (req, res, next) => {
   try {
     let products = await Product.findAll({ order: [['updatedAt', 'DESC']],limit: 10});
-    console.log(products)
     let list = [];
     await Promise.all(
       products.map(async (product) => {
@@ -1470,5 +1489,6 @@ module.exports = {
   getTopSellingProduct,
   isProductInWishlist,
   getProductsByCategoryName,
-  wishlistSize
+  wishlistSize,
+  ProductNumber,
 };
