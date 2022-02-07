@@ -345,24 +345,26 @@ const getProductById = async (req, res, next) => {
 
   try {
     let product = await Product.findOne({ where: { id: id }, raw:true });
-    console.log('hana1')
-    console.log(product.category);
+    // console.log('hana1')
+    // console.log(product.category);
     // product = product.dataValues;
 
     // update user id to user info
     let defaultUser = await User.findOne({ where: { id: product.user }, raw:true });
     // console.log(defaultUser);
     // defaultUser = defaultUser.dataValues;
-    console.log(product.category);
+    // console.log(product.category);
     let user = {
+      id: product.user,
       fullName: defaultUser.fullName,
       username: defaultUser.username,
       email: defaultUser.email,
       devloperType: defaultUser.devloperType,
     };
 
-    product.user = user;
 
+    product.user = user;
+    console.log(product.user)
     // update category id to category info
     console.log(product.category);
     let defaultCategory = await Category.findOne({
@@ -371,7 +373,7 @@ const getProductById = async (req, res, next) => {
 
     // defaultCategory = defaultCategory.dataValues;
     product.category = defaultCategory;
-    console.log(product.category);
+    // console.log(product.category);
     // update subcategory id to subcategory info
     let defaultSubcategory = await Subctegory.findOne({
       where: { id: product.subcategory }, raw:true
