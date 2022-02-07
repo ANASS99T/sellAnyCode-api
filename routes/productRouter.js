@@ -96,7 +96,7 @@ router.post('/whishlist_prod',checkAuth,productController.addProductToWhislist);
 router.post('/inwhishlist',checkAuth,productController.isProductInWishlist);
 router.post('/wishlistSize',checkAuth,productController.wishlistSize);
 router.delete('/rmwhislistprod',checkAuth, productController.deleteWhislistProd);
-
+router.delete('/removefromwhishlist/:id',checkAuth, productController.deleteProductFromWhislitList);
 //likes
 router.post('/likeprod',productController.addLikesToProduct);
 
@@ -110,7 +110,7 @@ router.delete('/review/:id',checkAuth,productController.deleteReview);
 
 
 //product filters
-router.get('/simillaritems/:category',productController.getSimilarItems);
+router.post('/simillaritems',productController.getSimilarItems);
 router.post('/newaddedproduct',productController.getNewAddedProduct);
 router.post('/hotproduct',productController.getHotProduct);
 router.post('/popularproduct',productController.getPopularProduct);
