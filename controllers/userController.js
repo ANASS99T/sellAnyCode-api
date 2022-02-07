@@ -702,7 +702,7 @@ const getWhishlistByUser = async (req, res, next) => {
         wishlistprod.user = user;
         // update produit id to produit info
         let product = await Product.findOne({
-          whre: { id: wishlistprod.product },
+          where: { id: wishlistprod.product },
         });
         product = product.dataValues;
 
