@@ -94,6 +94,7 @@ router.get('/', productController.getAllProducts);
 //whishlist
 router.post('/whishlist_prod',checkAuth,productController.addProductToWhislist);
 router.post('/inwhishlist',checkAuth,productController.isProductInWishlist);
+router.post('/wishlistSize',checkAuth,productController.wishlistSize);
 router.delete('/rmwhislistprod',checkAuth, productController.deleteWhislistProd);
 router.delete('/removefromwhishlist/:id',checkAuth, productController.deleteProductFromWhislitList);
 //likes
@@ -115,6 +116,7 @@ router.post('/hotproduct',productController.getHotProduct);
 router.post('/popularproduct',productController.getPopularProduct);
 router.post('/topsellingproduct',productController.getTopSellingProduct);
 
+router.post('/categoryName/:category',productController.getProductsByCategoryName);
 
 
 
