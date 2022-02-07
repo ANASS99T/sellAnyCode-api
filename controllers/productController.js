@@ -406,42 +406,43 @@ const getProductById = async (req, res, next) => {
 const getAllProducts = async (req, res, next) => {
   console.log("Get all rpoducrts")
   try { 
-    let products = await Product.findAll();
+    let products = await Product.findAll({ order: [['updatedAt', 'DESC']]});
+    
     let list = [];
     await Promise.all(
       products.map(async (product) => {
+        // console.log(product.category)
         // update user id to user info
-        let defaultUser = await User.findOne({ where: { id: product.user } });
+        // let defaultUser = await User.findOne({ where: { id: product.user } });
 
-        defaultUser = defaultUser.dataValues;
-
-        let user = {
-          fullName: defaultUser.fullName,
-          username: defaultUser.username,
-          email: defaultUser.email,
-        };
-
+        // defaultUser = defaultUser.dataValues;
+        
+        // let user = {
+        //   fullName: defaultUser.fullName,
+        //   username: defaultUser.username,
+        //   email: defaultUser.email,
+        // };
+        // console.log(defaultUser);
         // update category id to category info
-        let category = await Category.findOne({
-          whre: { id: product.category },
-        });
-
-        category = category.dataValues;
-
+        // let category = await Category.findOne({
+        //   whre: { id: product.category },
+        // });
+        // console.log(product.category)
+        // category = category.dataValues;
+        // console.log('hey')
+        //  console.log(category)
         // update subcategory id to subcategory info
-        let subcategory = await Subctegory.findOne({
-          whre: { id: product.subcategory },
-        });
+        // let subcategory = await Subctegory.findOne({
+        //   whre: { id: product.subcategory },
+        // });
 
-        subcategory = subcategory.dataValues;
+        // subcategory = subcategory.dataValues;
 
         const obj = await {
           ...product.dataValues,
-          user: user,
-          category: category,
-          subcategory: subcategory,
         };
         await list.push(obj);
+        console.log(list);
       })
     );
 
@@ -1091,10 +1092,13 @@ const getReviewByProduct = async (req, res, next) => {
 // *  ==================== START ====================
 
 const getSimilarItems = async (req, res, next) => {
-  const { category } = req.params;
+  
+  const {product,category}= req.body;
+  console.log('wa zmer')
+  console.log(req.body)
 
   try {
-    let products = await Product.findAll({ where: { category: category },limit: 8 });
+    let products = await Product.findAll({ where: { category: category, id : {[Op.not]:product} },limit: 8 });
     let list = [];
     await Promise.all(
       products.map(async (product) => {
@@ -1116,24 +1120,20 @@ const getSimilarItems = async (req, res, next) => {
 
         category = category.dataValues;
 
-        // update subcategory id to subcategory info
-        let subcategory = await Subctegory.findOne({
-          whre: { id: product.subcategory },
-        });
-
-        subcategory = subcategory.dataValues;
 
         const obj = await {
           ...product.dataValues,
           user: user,
-          category: category,
-          subcategory: subcategory,
+          category: category
         };
         await list.push(obj);
       })
     );
+    
+    // console.log(list);
 
     return res.status(201).json({ success: true, products: list });
+    
   } catch (error) {
     console.log(error);
     return res.status(403).json({ success: false, error });
@@ -1149,6 +1149,7 @@ const getSimilarItems = async (req, res, next) => {
 const getNewAddedProduct = async (req, res, next) => {
   try {
     let products = await Product.findAll({ order: [['updatedAt', 'DESC']],limit: 10});
+    console.log(products)
     let list = [];
     await Promise.all(
       products.map(async (product) => {
@@ -1163,25 +1164,9 @@ const getNewAddedProduct = async (req, res, next) => {
           email: defaultUser.email,
         };
 
-        // update category id to category info
-        let category = await Category.findOne({
-          whre: { id: product.category },
-        });
-
-        category = category.dataValues;
-
-        // update subcategory id to subcategory info
-        let subcategory = await Subctegory.findOne({
-          whre: { id: product.subcategory },
-        });
-
-        subcategory = subcategory.dataValues;
-
         const obj = await {
           ...product.dataValues,
           user: user,
-          category: category,
-          subcategory: subcategory,
         };
         await list.push(obj);
       })
