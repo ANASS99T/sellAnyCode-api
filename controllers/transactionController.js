@@ -90,6 +90,22 @@ const successTransaction = async (req, res) => {
   };
   try {
     const transaction = await Transaction.create(data);
+    
+    //Add product to sells table
+    const dataselledproduct = {
+      user: req.body.user,
+      product: req.body.product,
+    };
+    await Sales.create(dataselledproduct);
+
+    //Incrementation of sells value in product table
+    let selprod = await Product.findOne({
+      where: { id: product }, raw:true
+    });
+    let Incrementationdata = {
+      sales: selprod.sales + 1,
+    };
+    await Product.update(Incrementationdata, { where: { id: product } });
 
     return res.status(201).json({
       success: true,
