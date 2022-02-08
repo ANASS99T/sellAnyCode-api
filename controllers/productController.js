@@ -970,6 +970,7 @@ const wishlistSize = async (req, res, next) => {
   }
 };
 
+
 //** Likes Fcts**//
 // TODO: Like a Product
 // *  ==================== START ====================

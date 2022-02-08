@@ -1,5 +1,4 @@
-const productModel = require('./productModel');
-const userModel = require('./userModel');
+
 
 module.exports = (sequelize, DataTypes) => {
   const Transaction = sequelize.define('transaction', {
@@ -7,6 +6,10 @@ module.exports = (sequelize, DataTypes) => {
       type: DataTypes.UUID,
       primaryKey: true,
       defaultValue: DataTypes.UUIDV4,
+    },
+    reference: {
+      type: DataTypes.STRING,
+      allowNull : false
     },
     type: {
       type: DataTypes.STRING,
@@ -38,18 +41,6 @@ module.exports = (sequelize, DataTypes) => {
     },
   });
 
-  // Transaction.associate = (models) => {
-  //   Transaction.belongsTo(models.User, {
-  //     foreignKey: {
-  //       allowNull: false,
-  //     },
-  //   });
-  //   Transaction.belongsTo(models.Product, {
-  //     foreignKey: {
-  //       allowNull: false,
-  //     },
-  //   });
-  // };
 
   return Transaction;
 };

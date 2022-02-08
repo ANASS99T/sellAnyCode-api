@@ -7,6 +7,10 @@ const checkAuth = require('../middleware/checkAuth');
 
 router.get('/userTransactions', checkAuth, transactionController.userTransactions );
 router.get('/userTransactions/success', checkAuth, transactionController.successTransactions );
+router.post('/isOwner', checkAuth, transactionController.isTheOwner );
+router.post('/successTransaction', checkAuth, transactionController.successTransaction );
+router.post('/failedTransaction', checkAuth, transactionController.failedTransaction );
+router.post('/hasProduct', checkAuth, transactionController.hasProduct );
 
 
 
