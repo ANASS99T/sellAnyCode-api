@@ -7,7 +7,7 @@ const { Op } = require('sequelize');
 // const User = db.users;
 const Product = db.products;
 const Transaction = db.transations;
-
+const Sales = db.sales
 // TODO: get user transactions
 
 // *  ==================== START ====================
@@ -93,8 +93,8 @@ const successTransaction = async (req, res) => {
     
     //Add product to sells table
     const dataselledproduct = {
-      user: req.body.user,
-      product: req.body.product,
+      user: user,
+      product: product,
     };
     await Sales.create(dataselledproduct);
 
