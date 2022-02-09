@@ -42,7 +42,7 @@ router.post('/admin/login', userController.loginAdmin);
 router.get('/:id', userController.getUserById);
 router.put('/password', checkAuth, userController.updatePassword);
 router.post('/reset-password', userController.forgetPassword);
-router.get('/reset-password/:id/:token', userController.ResetPasswordCheckUser);
+router.post('/reset-password/:id/:token', userController.ResetPasswordCheckUser);
 router.put('/reset-password/', userController.ResetPassword);
 router.put('/', checkAuth, userController.updateUser);
 router.delete('/:id', checkAuth, userController.deleteAccount);

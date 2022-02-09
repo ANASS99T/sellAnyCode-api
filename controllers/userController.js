@@ -1,10 +1,9 @@
-const db = require("../models");
-const bcrypt = require("bcrypt");
-const jwt = require("jsonwebtoken");
-require("dotenv/config");
-const fs = require("fs");
-const mail = require("./MailSender");
-
+const db = require('../models');
+const bcrypt = require('bcrypt');
+const jwt = require('jsonwebtoken');
+require('dotenv/config');
+const fs = require('fs');
+const mail = require('./MailSender');
 
 // TODO: Function to Create Valide Access Token :
 const createRefreshToken = (user, role) =>
@@ -22,21 +21,20 @@ const User = db.users;
 const Whishlist = db.wishlists;
 const Product = db.products;
 
-
 //TODO: Add user
 // *  ==================== START ====================
 const addUser = async (data) => {
   // ? check if the email already exists?
 
   const isExist = await User.findOne({
-    attributes: ["email"],
+    attributes: ['email'],
     where: {
       email: data.email,
     },
   });
 
   if (isExist && isExist.email === data.email) {
-    return { success: false, status: 403, message: "Email already exists" };
+    return { success: false, status: 403, message: 'Email already exists' };
   }
 
   // TODO: generate a hashed password
@@ -47,7 +45,7 @@ const addUser = async (data) => {
   //TODO: Create user
   let user = await User.create(data);
   user = user.dataValues;
-  return { success: true, status: 201, message: "User created", user };
+  return { success: true, status: 201, message: 'User created', user };
 };
 // *  ==================== END ====================
 
@@ -69,17 +67,17 @@ const register = async (req, res) => {
     if (addedUser.success) {
       const result = addedUser?.user;
       // TODO: Generate a token and log the user in
-      const Refreshtoken = createRefreshToken(result, "user");
-      const AccessToken = createAccessToken(result.id, "user");
+      const Refreshtoken = createRefreshToken(result, 'user');
+      const AccessToken = createAccessToken(result.id, 'user');
 
       // TODO: Save the token in the cookies
 
-      res.cookie("refresh_token", Refreshtoken, { httpOnly: true });
-      res.cookie("access_token", AccessToken, { httpOnly: true });
+      res.cookie('refresh_token', Refreshtoken, { httpOnly: true });
+      res.cookie('access_token', AccessToken, { httpOnly: true });
 
       res.status(201).json({
         success: true,
-        message: "user created successfully.",
+        message: 'user created successfully.',
         user: result,
         token: AccessToken,
       });
@@ -132,24 +130,24 @@ const login = async (req, res) => {
           result.password
         );
         if (!correctPassword) {
-          return res.status(403).json({ error: "Incorrect Password" });
+          return res.status(403).json({ error: 'Incorrect Password' });
         }
       } else {
-        return res.status(403).json({ error: "Incorrect Email" });
+        return res.status(403).json({ error: 'Incorrect Email' });
       }
 
       // TODO: Generate a token and log the user in
-      const Refreshtoken = createRefreshToken(result, "user");
-      const AccessToken = createAccessToken(result.id, "user");
+      const Refreshtoken = createRefreshToken(result, 'user');
+      const AccessToken = createAccessToken(result.id, 'user');
 
       // TODO: Save the token in the cookies
 
-      res.cookie("refresh_token", Refreshtoken, { httpOnly: true });
-      res.cookie("access_token", AccessToken, { httpOnly: true });
+      res.cookie('refresh_token', Refreshtoken, { httpOnly: true });
+      res.cookie('access_token', AccessToken, { httpOnly: true });
 
       res.status(201).json({
         success: true,
-        message: "user logged in successfully.",
+        message: 'user logged in successfully.',
         user: result,
         token: AccessToken,
       });
@@ -195,24 +193,24 @@ const loginAdmin = async (req, res) => {
           result.password
         );
         if (!correctPassword) {
-          return res.status(403).json({ error: "Incorrect Password" });
+          return res.status(403).json({ error: 'Incorrect Password' });
         }
       } else {
-        return res.status(403).json({ error: "Incorrect Email" });
+        return res.status(403).json({ error: 'Incorrect Email' });
       }
 
       // TODO: Generate a token and log the user in
-      const Refreshtoken = createRefreshToken(result, "admin");
-      const AccessToken = createAccessToken(result.id, "admin");
+      const Refreshtoken = createRefreshToken(result, 'admin');
+      const AccessToken = createAccessToken(result.id, 'admin');
 
       // TODO: Save the token in the cookies
 
-      res.cookie("refresh_token", Refreshtoken, { httpOnly: true });
-      res.cookie("access_token", AccessToken, { httpOnly: true });
+      res.cookie('refresh_token', Refreshtoken, { httpOnly: true });
+      res.cookie('access_token', AccessToken, { httpOnly: true });
 
       res.status(201).json({
         success: true,
-        message: "user logged in successfully.",
+        message: 'user logged in successfully.',
         user: result,
         token: AccessToken,
       });
@@ -268,14 +266,14 @@ const updatePassword = async (req, res) => {
     const user = User.findOne({ where: { id: data.id } });
     user.then(async (result) => {
       // return console.log(result);
-      const user = result
+      const user = result;
       // return console.log(user.password)
       // ?  Check if the password and confirm password matches ?
 
       if (data.newPassword !== data.confirmPassword) {
         return res.status(403).json({
           success: false,
-          message: "password and confirm password do not match",
+          message: 'password and confirm password do not match',
         });
       }
 
@@ -289,7 +287,7 @@ const updatePassword = async (req, res) => {
       if (await !bcrypt.compare(data.oldPassword, user.password)) {
         return res
           .status(403)
-          .json({ error: "your old password in incorrect!" });
+          .json({ error: 'your old password in incorrect!' });
       } else {
         // TODO: hash the new password and updata the password of the user
 
@@ -305,7 +303,7 @@ const updatePassword = async (req, res) => {
               .then((data) => {
                 return res.status(201).json({
                   success: true,
-                  message: "Password updated successfully",
+                  message: 'Password updated successfully',
                 });
               })
               .catch((err) => {
@@ -322,7 +320,7 @@ const updatePassword = async (req, res) => {
   } else {
     return res
       .status(403)
-      .json({ success: false, message: "User ID not match!" });
+      .json({ success: false, message: 'User ID not match!' });
   }
 };
 
@@ -332,51 +330,56 @@ const updatePassword = async (req, res) => {
 // *  ==================== START ====================
 
 const forgetPassword = async (req, res, next) => {
-  const { email } = req.body;
-
   // ? Check if the user exists and the email is valid
+  try {
+    const { email } = req.body;
+    const user = await User.findOne({ where: { email: email } });
+    // user
+    // .then((result) => {
+    if (email === user.email) {
+      // TODO: Create a one time link that is valid for 5 minutes
 
-  const user = User.findOne({ where: { email: email } });
-  user
-    .then((result) => {
-      if (email === result.email) {
-        // TODO: Create a one time link that is valid for 5 minutes
+      // create a unique secret for the user with the jwt secret and user's password
+      const secret = process.env.JWT_SECRET + user.password;
 
-        // create a unique secret for the user with the jwt secret and user's password
-        const secret = process.env.JWT_SECRET + result.password;
+      const payload = {
+        email: user.email,
+        id: user.id,
+      };
 
-        const payload = {
-          email: result.email,
-          id: result.id,
-        };
+      // Generate a token
 
-        // Generate a token
+      const token = jwt.sign(payload, secret, { expiresIn: '5m' });
 
-        const token = jwt.sign(payload, secret, { expiresIn: "5m" });
+      // Example of link : http://localost:5000/152{user_id}/qweqweqweqweqwe{token}
+      const link = process.env.LINK + `/reset-password/${user.id}/${token}`;
 
-        // Example of link : http://localost:5000/152{user_id}/qweqweqweqweqwe{token}
-        const link = process.env.LINK + `/reset-password/${result.id}/${token}`;
+      console.log(link);
 
-        console.log(link);
+      // TODO: Send the link to the user by email
+      mail(
+        email,
+        'Reset your password',
+        `You can use the link bellow to reset your password: <${link}> By clicking the link you will be redirected to the website where you can enter a new password and to confirm it.
+        Thank you for using our service`
+      );
 
-        // TODO: Send the link to the user by email
-        mail( email, 'Reset your password', `You can use the link bellow to reset your password: <${link}> By clicking the link you will be redirected to the website where you can enter a new password and to confirm it.
-        Thank you for using our service`)
-
-
-        return res.status(201).json({
-          success: true,
-          message: "Reset link generated successfully",
-          link: link,
-        });
-      } else {
-        next();
-      }
-    })
-    .catch((err) => {
-      console.log({ error: err });
+      return res.status(201).json({
+        success: true,
+        message: 'Reset link generated successfully',
+        link: link,
+      });
+    } else {
       next();
-    });
+    }
+  } catch (error) {
+    console.log({ error: error });
+  }
+  // })
+  // .catch((err) => {
+  //   console.log({ error: err });
+  //   next();
+  // });
 };
 
 // *  ==================== END ====================
@@ -411,7 +414,7 @@ const ResetPasswordCheckUser = async (req, res, next) => {
       } else {
         return res
           .status(403)
-          .json({ success: false, message: "User not exists" });
+          .json({ success: false, message: 'User not exists' });
       }
     })
     .catch((err) => {
@@ -427,55 +430,50 @@ const ResetPasswordCheckUser = async (req, res, next) => {
 // *  ==================== START ====================
 
 const ResetPassword = async (req, res) => {
-  const { id, password, confirmPassword } = req.body;
+  const { id, password, confirmPassword, token } = req.body;
 
   // TODO: Check the user existance
+  try {
+    const user = await User.findOne({ where: { id: id } });
+    if (user.id === id) {
+      // ? check if password and confirm password matches
 
-  const user = User.findOne({ where: { id: id } });
-  user
-    .then((user) => {
-      if (user.id === id) {
-        // ? check if password and confirm password matches
-
-        if (password !== confirmPassword) {
-          return res.status(403).json({
-            success: false,
-            message: "password and confirm password not match",
-          });
-        }
-
-        // Generating the secret to verify the token
-        const secret = process.env.JWT_SECRET + user.password;
-
-        try {
-          const token = req.headers.authorization.split(" ")[1];
-          // Verifying the token
-          const payload = jwt.verify(token, secret);
-
-          // TODO: hash the password
-
-          const hash = bcrypt.hash(password, 10);
-
-          hash.then((pass) => {
-            User.update({ password: pass }, { where: { id: id } });
-            return res
-              .status(200)
-              .json({ success: true, message: "password reset successfully" });
-          });
-        } catch (error) {
-          console.log(error);
-          return res.status(403).json({ success: false, error });
-        }
-      } else {
-        return res
-          .status(403)
-          .json({ success: false, message: "Invalid user" });
+      if (password !== confirmPassword) {
+        return res.status(403).json({
+          success: false,
+          message: 'password and confirm password not match',
+        });
       }
-    })
-    .catch((err) => {
-      console.log(err);
-      return res.status(403).json({ success: false, error: err });
-    });
+
+      // Generating the secret to verify the token
+      const secret = process.env.JWT_SECRET + user.password;
+
+      try {
+        // const token = token;
+        // Verifying the token
+        const payload = jwt.verify(token, secret);
+
+        // TODO: hash the password
+
+        const hash = bcrypt.hash(password, 10);
+
+        hash.then((pass) => {
+          User.update({ password: pass }, { where: { id: id } });
+          return res
+            .status(200)
+            .json({ success: true, message: 'password reset successfully' });
+        });
+      } catch (error) {
+        console.log(error);
+        return res.status(403).json({ success: false, error });
+      }
+    } else {
+      return res.status(403).json({ success: false, message: 'Invalid user' });
+    }
+  } catch (err) {
+    console.log(err);
+    return res.status(403).json({ success: false, error: err });
+  }
 };
 
 // *  ==================== END ====================
@@ -491,10 +489,10 @@ const updateUser = async (req, res, next) => {
   // !prevent updating avatar, id, income, whidraw
 
   if (
-    req.body.hasOwnProperty("avatar") ||
-    req.body.hasOwnProperty("id") ||
-    req.body.hasOwnProperty("income") ||
-    req.body.hasOwnProperty("whidraw")
+    req.body.hasOwnProperty('avatar') ||
+    req.body.hasOwnProperty('id') ||
+    req.body.hasOwnProperty('income') ||
+    req.body.hasOwnProperty('whidraw')
   ) {
     return res.status(403).json({
       success: false,
@@ -503,14 +501,11 @@ const updateUser = async (req, res, next) => {
   }
 
   try {
-    const user = await User.update(
-      { ...req.body },
-      { where: { id: id } }
-    );
+    const user = await User.update({ ...req.body }, { where: { id: id } });
 
     return res
       .status(201)
-      .json({ success: true, message: "user updated successfully" });
+      .json({ success: true, message: 'user updated successfully' });
   } catch {
     (err) => {
       console.log(err);
@@ -541,13 +536,13 @@ const updateAvatar = async (req, res, next) => {
           fs.unlink(`uploads/avatar/${isExist.avatar}`, (err) => {
             if (err)
               return res.status(403).json({ success: false, error: err });
-            console.log("file deleted successfully");
+            console.log('file deleted successfully');
           });
 
         await User.update({ avatar: null }, { where: { id: id } });
         return res
           .status(201)
-          .json({ success: true, message: "avatar successfully" });
+          .json({ success: true, message: 'avatar successfully' });
       }
 
       await User.update({ avatar: req.file.filename }, { where: { id: id } });
@@ -556,12 +551,12 @@ const updateAvatar = async (req, res, next) => {
       isExist.avatar !== null &&
         fs.unlink(`uploads/avatar/${isExist.avatar}`, (err) => {
           if (err) return res.status(403).json({ success: false, error: err });
-          console.log("file deleted successfully");
+          console.log('file deleted successfully');
         });
 
       return res
         .status(201)
-        .json({ success: true, message: "avatar successfully" });
+        .json({ success: true, message: 'avatar successfully' });
     } catch {
       (err) => {
         console.log(err);
@@ -571,10 +566,10 @@ const updateAvatar = async (req, res, next) => {
   } else {
     fs.unlink(`uploads/avatar/${req.file.filename}`, (err) => {
       if (err) return res.status(403).json({ success: false, error: err });
-      console.log("file deleted successfully");
+      console.log('file deleted successfully');
     });
 
-    return res.status(403).json({ success: false, message: "Not valid ID" });
+    return res.status(403).json({ success: false, message: 'Not valid ID' });
   }
 
   // throw "Testing error"
@@ -594,7 +589,7 @@ const deleteAccount = async (req, res) => {
 
     return res
       .status(200)
-      .json({ success: true, message: "User deleted successfully" });
+      .json({ success: true, message: 'User deleted successfully' });
   } catch {
     (err) => {
       console.log(err);
@@ -619,21 +614,22 @@ const generateToken = async (req, res, next) => {
         console.log(err);
         return res
           .status(401)
-          .json({ message: "your token is not valid, please re login" });
+          .json({ message: 'your token is not valid, please re login' });
       } else {
         const AccessToken = createAccessToken(
           decoded?.data?.id,
           decoded?.data?.role
         );
-        res.cookie("access_token", AccessToken, { httpOnly: true });
-        return res.status(201).json({ success: true, user : decoded?.data?.id });
+        res.cookie('access_token', AccessToken, { httpOnly: true });
+        return res.status(201).json({ success: true, user: decoded?.data?.id });
       }
     });
   } else {
     // console.log('the error : ' , token);
-    return res
-      .status(201)
-      .json({ success: false,error: "your token is not valid, please re login" });
+    return res.status(201).json({
+      success: false,
+      error: 'your token is not valid, please re login',
+    });
   }
 };
 
@@ -644,11 +640,11 @@ const generateToken = async (req, res, next) => {
 // *  ==================== Start ====================
 
 const logOut = async (req, res, next) => {
-  res.clearCookie("refresh_token");
-  res.clearCookie("access_token");
+  res.clearCookie('refresh_token');
+  res.clearCookie('access_token');
   return res
     .status(200)
-    .json({ success: true, message: "logged out successfully" });
+    .json({ success: true, message: 'logged out successfully' });
 };
 
 // *  ==================== END ====================
@@ -677,10 +673,9 @@ const getLoggedInUser = async (req, res) => {
 // *  ==================== START ====================
 
 const getWhishlistByUser = async (req, res, next) => {
-  const user  = req.user;
+  const user = req.user;
 
   try {
-
     let wishlistprod = await Whishlist.findAll({
       where: { user: user },
     });
@@ -706,11 +701,10 @@ const getWhishlistByUser = async (req, res, next) => {
         });
         product = product.dataValues;
 
-
         const obj = await {
           ...wishlistprod.dataValues,
           user: user,
-          product: product
+          product: product,
         };
         await list.push(obj);
       })
@@ -722,7 +716,6 @@ const getWhishlistByUser = async (req, res, next) => {
     return res.status(403).json({ success: false, error });
   }
 };
-
 
 // *  ==================== END ====================
 
